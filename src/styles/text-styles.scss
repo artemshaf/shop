@@ -1,0 +1,64 @@
+.title {
+  &_text {
+    &-ex-lg {
+      font-weight: 600;
+      font-size: 36px;
+      line-height: 42px;
+    }
+
+    &-lg {
+      font-weight: 600;
+      font-size: 26px;
+      line-height: 36px;
+    }
+
+    &-md {
+      font-weight: 600;
+      font-size: 22px;
+      line-height: 30px;
+    }
+
+    &-sm {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    &-ex-sm {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 22px;
+    }
+  }
+}
+
+.subtitle_text {
+  font-weight: 600;
+  font-size: var(--font-sm);
+  line-height: 18px;
+}
+
+.body_text {
+  font-weight: 400;
+  font-size: var(--font-md);
+  line-height: 22px;
+
+  &-bold {
+    font-weight: 700;
+    font-size: var(--font-md);
+    line-height: 22px;
+  }
+}
+
+.small_text {
+  font-weight: 500;
+  font-size: var(--font-ex-sm);
+  line-height: 18px;
+}
+
+.button_text {
+  font-weight: 500;
+  font-size: var(--font-btn);
+  line-height: 15px;
+  text-transform: uppercase;
+}

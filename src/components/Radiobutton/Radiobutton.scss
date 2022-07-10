@@ -1,0 +1,39 @@
+.radio {
+  display: none;
+}
+
+.children {
+  position: relative;
+  display: inline-block;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid red;
+    position: absolute;
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: var(--dark);
+    opacity: 0;
+    transition: var(--transition-md);
+    border-radius: 50%;
+  }
+}
+
+.radio:checked + .children::before {
+  opacity: 1;
+}

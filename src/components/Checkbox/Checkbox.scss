@@ -1,0 +1,42 @@
+.checkbox-container {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.fake{
+	
+}
+
+input[type="checkbox"] {
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  background-color: #fff;
+  width: 17px;
+  height: 17px;
+  border: 2px solid var(--grey);
+  padding: 3px;
+  cursor: pointer;
+}
+input[type="checkbox"]:checked {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--dark);
+}
+
+input[type="checkbox"]:checked {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--dark);
+}
+
+input[type="checkbox"]:hover {
+  transition: var(--transition-md);
+  border-color: var(--dark);
+}
