@@ -5,7 +5,7 @@
   --grey-dark: #9c9c9c;
   --white: #ffffff;
   --sale: #e91e63;
-  -yellow: #f0cc84;
+  --yellow: #f0cc84;
   --error: #d61313;
   --success: #0bb17f;
 
@@ -19,5 +19,10 @@
 
   --font-btn: 11px;
 
+  --transition-lg: 0.4s;
   --transition-md: 0.25s;
+  --transition-sm: 0.15s;
+
+  --opacity-md: 0.6;
+  --opacity-sm: 0.4;
 }

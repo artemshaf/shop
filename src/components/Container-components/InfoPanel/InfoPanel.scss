@@ -1,0 +1,17 @@
+.info-panel {
+  &__container {
+    display: flex;
+    column-gap: 30px;
+    align-items: center;
+  }
+  &__text {
+    color: var(--grey);
+  }
+  &__icon {
+    width: 18px;
+    height: 18px;
+    fill: var(--white);
+    margin-right: 8px;
+    vertical-align: bottom;
+  }
+}

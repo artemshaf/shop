@@ -1,0 +1,43 @@
+.button {
+  outline: none;
+  cursor: pointer;
+  line-height: 18px;
+  padding: 11px;
+  &_light {
+    color: var(--dark);
+    background-color: var(--grey-white);
+    transition: var(--transition-md);
+    border: none;
+    &:hover {
+      background-color: var(--grey);
+    }
+    &:active {
+      color: var(--white);
+      background-color: var(--grey-dark);
+    }
+  }
+
+  &_dark {
+    color: var(--dark);
+    color: var(--white);
+    background-color: var(--dark);
+    transition: var(--transition-md);
+    border: none;
+    &:hover {
+      background-color: var(--grey);
+      color: var(--dark);
+    }
+    &:active {
+      color: var(--white);
+      background-color: var(--grey-dark);
+    }
+  }
+
+  &_lg {
+    padding: 17px 22px;
+  }
+
+  &_sm {
+    padding: 13px 0;
+  }
+}

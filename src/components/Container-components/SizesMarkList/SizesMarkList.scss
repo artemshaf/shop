@@ -1,0 +1,26 @@
+.sizes-mark__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  &-item {
+    padding: 5px;
+    height: 32px;
+    width: 32px;
+    background-color: var(--grey-white);
+    text-transform: uppercase;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-md);
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.2);
+      border: 1px solid black;
+    }
+    & > span {
+      line-height: 1;
+      opacity: 0.8;
+    }
+  }
+}

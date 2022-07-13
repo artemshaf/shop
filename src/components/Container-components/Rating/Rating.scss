@@ -1,0 +1,12 @@
+.rating-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+
+  &__item {
+    cursor: pointer;
+		
+    &_grey {
+      fill: var(--grey);
+    }
+  }
+}

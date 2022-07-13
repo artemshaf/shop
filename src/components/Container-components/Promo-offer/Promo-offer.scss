@@ -1,0 +1,61 @@
+.promo-offer {
+  &__container {
+    background: linear-gradient(180deg, #f3f2f2 0%, #dcdbdb 100%);
+    position: relative;
+    padding: 60px 0;
+  }
+  &__img {
+    position: absolute;
+    background-color: none;
+    max-height: 100%;
+
+    &_left {
+      bottom: -6.5%;
+      left: 10%;
+
+      @media (max-width: 560px) {
+        left: -20%;
+      }
+    }
+
+    &_right {
+      bottom: 0;
+      right: 10%;
+    }
+  }
+  &__form {
+    padding: 80px;
+    width: 45%;
+    background-color: #fff;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    @media (max-width: 768px) {
+      padding: 40px;
+      width: 60%;
+    }
+    @media (max-width: 560px) {
+      padding: 20px;
+      width: 75%;
+    }
+  }
+
+  &__img-descr {
+    position: static;
+    width: 100%;
+    padding: 0;
+    padding-bottom: 30px;
+    font-size: 24px;
+  }
+
+  &__actions {
+    &__input {
+      width: 100%;
+      margin-bottom: 25px;
+    }
+    &__btn {
+      width: 100%;
+      font-size: 16px;
+    }
+  }
+}

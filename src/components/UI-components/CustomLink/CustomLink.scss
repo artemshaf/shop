@@ -1,0 +1,13 @@
+.link {
+  transition: var(--transition-md);
+  color: var(--dark);
+
+  &:hover {
+    font-weight: 600;
+  }
+
+  &-active {
+    font-weight: 600;
+    text-decoration: underline;
+  }
+}

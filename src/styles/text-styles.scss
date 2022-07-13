@@ -1,5 +1,5 @@
 .title {
-  &_text {
+  &__text {
     &-ex-lg {
       font-weight: 600;
       font-size: 36px;
@@ -38,12 +38,12 @@
   line-height: 18px;
 }
 
-.body_text {
+.body-text {
   font-weight: 400;
   font-size: var(--font-md);
   line-height: 22px;
 
-  &-bold {
+  &_bold {
     font-weight: 700;
     font-size: var(--font-md);
     line-height: 22px;
@@ -53,7 +53,7 @@
 .small_text {
   font-weight: 500;
   font-size: var(--font-ex-sm);
-  line-height: 18px;
+  line-height: 13px;
 }
 
 .button_text {
@@ -61,4 +61,5 @@
   font-size: var(--font-btn);
   line-height: 15px;
   text-transform: uppercase;
+  opacity: 0.8;
 }

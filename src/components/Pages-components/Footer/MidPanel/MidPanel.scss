@@ -1,0 +1,30 @@
+.footer__mid-panel {
+  &__container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__list {
+    display: grid;
+    margin-bottom: 10px;
+    &-title {
+      margin-bottom: 20px;
+    }
+
+    &-item {
+      opacity: 0.8;
+      margin-bottom: 12px;
+      text-decoration: none;
+    }
+  }
+}

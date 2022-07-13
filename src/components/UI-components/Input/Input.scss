@@ -1,0 +1,28 @@
+.input {
+  color: var(--dark);
+  border: none;
+  outline: none;
+  padding: 15px;
+  background-color: var(--grey-white);
+  font-weight: 600;
+
+  &__container {
+  }
+
+  &__subtutle {
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  &::placeholder {
+    opacity: var(--opacity-sm);
+  }
+
+  &:hover::placeholder {
+    opacity: var(--opacity-md);
+  }
+
+  &_error {
+    border: 2px solid var(--error);
+  }
+}

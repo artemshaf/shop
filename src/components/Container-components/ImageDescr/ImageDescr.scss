@@ -1,0 +1,46 @@
+.image-descr {
+  &__block {
+    position: absolute;
+    padding: 15px;
+    background-color: var(--white);
+    text-align: center;
+    border-radius: 4px;
+    transition: var(--transition-md);
+    width: 55%;
+    text-transform: uppercase;
+
+    @media (max-width: 768px) {
+      padding: 5px;
+    }
+
+    &_lg {
+      padding: 25px;
+      @media (max-width: 768px) {
+        padding: 10px;
+      }
+    }
+
+    &:hover {
+      width: 100%;
+    }
+  }
+  &__title {
+    opacity: 0.4;
+    margin-bottom: 8px;
+    @media (max-width: 768px) {
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+  }
+
+  &__descr {
+    @media (max-width: 768px) {
+      font-size: 16px;
+      line-height: 1.2;
+    }
+  }
+
+  &__sale {
+    color: var(--sale);
+  }
+}

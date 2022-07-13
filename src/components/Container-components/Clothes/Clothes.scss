@@ -1,0 +1,34 @@
+.clothes {
+  &__container {
+    margin-top: 100px;
+    margin-bottom: 100px;
+
+    @media (max-width: 768px) {
+      margin-top: 40px;
+      margin-bottom: 40px;
+    }
+  }
+
+  &__top-panel {
+    &__info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      margin-top: 20px;
+
+      &-title {
+        font-weight: 600;
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        row-gap: 15px;
+      }
+    }
+
+    &__btn {
+      width: 100%;
+    }
+  }
+}
