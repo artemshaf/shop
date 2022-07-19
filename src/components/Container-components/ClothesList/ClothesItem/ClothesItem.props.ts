@@ -1,7 +1,6 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { ClothesItem } from "../ClothesList.props";
-
+import { IClothesItem } from '../../Clothes/Clothes.props';
 export interface IClothesItemProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLLIElement>, HTMLLIElement> {
-  thing: ClothesItem;
+  thing: IClothesItem;
 }

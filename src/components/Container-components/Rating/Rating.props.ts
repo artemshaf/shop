@@ -6,4 +6,5 @@ export interface IRatingProps
     HTMLUListElement
   > {
   rate: number;
+  count?: number;
 }

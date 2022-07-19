@@ -7,7 +7,7 @@ export const Promo = (props: IPromoProps) => {
   return (
     <>
       <BannerSlider />
-      <ServiceInfo />
+      <ServiceInfo descr />
     </>
   );
 };

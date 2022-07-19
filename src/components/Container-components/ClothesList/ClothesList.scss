@@ -47,6 +47,7 @@
       height: 80%;
       object-fit: cover;
       transition: var(--transition-lg);
+      cursor: pointer;
     }
 
     &__title {
@@ -104,20 +105,11 @@
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
-    &-item:nth-child(n + 13) {
-      display: none;
-    }
   }
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
-    &-item:nth-child(n + 9) {
-      display: none;
-    }
   }
   @media (max-width: 560px) {
     grid-template-columns: 1fr;
-    &-item:nth-child(n + 4) {
-      display: none;
-    }
   }
 }

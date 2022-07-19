@@ -8,7 +8,7 @@ import { ReactComponent as American } from "../../../imgs/payments/american-expr
 import "./PaymentsList.scss";
 import cn from "classnames";
 import { v4 as uuidv4 } from "uuid";
-import { useCallback, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { IPaymentsListProps } from "./PaymentsList.props";
 
 export const PaymentsList = ({ className, ...props }: IPaymentsListProps) => {
@@ -45,10 +45,6 @@ export const PaymentsList = ({ className, ...props }: IPaymentsListProps) => {
     ],
     []
   );
-
-  useEffect(() => {
-    console.log(items);
-  }, []);
 
   return (
     <ul className={cn("payments-list", className)} {...props}>

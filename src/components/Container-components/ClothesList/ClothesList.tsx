@@ -1,8 +1,8 @@
 import { IClothesListProps } from "./ClothesList.props";
 import "./ClothesList.scss";
 import cn from "classnames";
-import { ClothesItem } from "./ClothesItem/ClothesItem";
 import { v4 as uuidv4 } from "uuid";
+import { ClothesItem } from './ClothesItem/ClothesItem';
 
 export const ClothesList = ({
   clothes = [],

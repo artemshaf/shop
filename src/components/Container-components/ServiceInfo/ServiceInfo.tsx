@@ -6,7 +6,11 @@ import "./ServiceInfo.scss";
 import { H } from "../../UI-components/H/H";
 import cn from "classnames";
 
-export const ServiceInfo = ({ className, ...props }: IServiceInfoProps) => {
+export const ServiceInfo = ({
+  descr = true,
+  className,
+  ...props
+}: IServiceInfoProps) => {
   const items = [
     {
       icon: <CarIcon className="service-info__icon" />,
@@ -41,7 +45,9 @@ export const ServiceInfo = ({ className, ...props }: IServiceInfoProps) => {
                 <H size="sm" className="service-info__title">
                   {item.title}
                 </H>
-                <p className="service-info__descr">{item.descr}</p>
+                {descr === true && (
+                  <p className="service-info__descr">{item.descr}</p>
+                )}
               </div>
             </li>
           ))}

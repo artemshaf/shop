@@ -1,40 +1,56 @@
-import { Route, Routes, useRoutes } from "react-router-dom";
+import { useRoutes } from "react-router-dom";
+import { withLayout } from "./components/Pages-components/Layout/Layout";
+import { About } from "./pages/About/About";
+import { Accessories } from "./pages/Accessories/Accessories";
+import { Beauty } from "./pages/Beauty/Beauty";
+import { Blog } from "./pages/Blog/Blog";
+import { Contact } from "./pages/Contact/Contact";
 import { DetailPage } from "./pages/DetailPage/DetailPage";
 import { MainPage } from "./pages/MainPage/MainPage";
 import { PNF } from "./pages/PNF/PNF";
+import { ProductPage } from "./pages/ProductPage/ProductPage";
 
-interface IApp {
-  props: number;
-}
-
-function App({ props }: IApp) {
+function App() {
   const routes = useRoutes([
     {
       path: "/",
       element: <MainPage />,
-      children: [
-        {
-          path: "/:params",
-          element: <DetailPage />,
-        },
-      ],
     },
     {
-      path: "/*",
+      path: "/about",
+      element: <About />,
+    },
+    {
+      path: "/:sex",
       element: <DetailPage />,
+    },
+    {
+      path: "/:sex/:id",
+      element: <ProductPage />,
+    },
+    {
+      path: "/beauty",
+      element: <Beauty />,
+    },
+    {
+      path: "/accessories",
+      element: <Accessories />,
+    },
+    {
+      path: "/blog",
+      element: <Blog />,
+    },
+    {
+      path: "/contact",
+      element: <Contact />,
+    },
+    {
+      path: "*",
+      element: <PNF />,
     },
   ]);
 
-  console.log(routes);
-
   return routes;
-  /* <Routes>
-        <Route path="/" element={<MainPage />}>
-          <Route path="sex" element={<DetailPage />} />
-          <Route path="men" element={<DetailPage />} />
-          <Route path="*" element={<PNF />} />
-        </Route>
-      </Routes> */
 }
 
-export default App;
+export const AppExp = withLayout(App);

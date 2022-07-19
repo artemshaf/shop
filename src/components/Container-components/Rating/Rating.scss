@@ -4,9 +4,12 @@
 
   &__item {
     cursor: pointer;
-		
+
     &_grey {
       fill: var(--grey);
     }
+  }
+  &__count {
+    margin-left: 10px;
   }
 }

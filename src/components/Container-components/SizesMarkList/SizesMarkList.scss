@@ -3,9 +3,7 @@
   flex-wrap: wrap;
   gap: 15px;
   &-item {
-    padding: 5px;
-    height: 32px;
-    width: 32px;
+    padding: 7px;
     background-color: var(--grey-white);
     text-transform: uppercase;
     text-align: center;
@@ -14,9 +12,10 @@
     justify-content: center;
     transition: var(--transition-md);
     cursor: pointer;
+    border: 1px solid var(--grey-white);
     &:hover {
-      transform: scale(1.2);
-      border: 1px solid black;
+      transform: scale(1.1);
+      border-color: black;
     }
     & > span {
       line-height: 1;

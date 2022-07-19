@@ -1,0 +1,28 @@
+.top-detail {
+  &__container {
+    background-color: var(--grey-white);
+    padding: 10px 0;
+  }
+
+  &__top-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__icons {
+      display: flex;
+      align-items: center;
+      &-text {
+        margin-left: 5px;
+        font-size: var(--font-lg);
+      }
+    }
+  }
+
+  &__title {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 2px;
+  }
+}

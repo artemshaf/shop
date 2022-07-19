@@ -4,4 +4,6 @@ export interface IServiceInfoProps
   extends DetailedHTMLProps<
     HTMLAttributes<HTMLUListElement>,
     HTMLUListElement
-  > {}
+  > {
+  descr: boolean;
+}

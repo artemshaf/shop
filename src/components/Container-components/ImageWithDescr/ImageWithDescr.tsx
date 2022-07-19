@@ -1,14 +1,16 @@
+import cn from "classnames";
 import { ImageDescr } from "../ImageDescr/ImageDescr";
 import { IImageWithDescrProps } from "./ImageWithDescr.props";
 import "./ImageWithDescr.scss";
 
 export const ImageWithDescr = ({
+  className,
   isBanner = false,
   description,
   img,
 }: IImageWithDescrProps) => {
   return (
-    <div className="image-descr-block">
+    <div className={cn("image-descr-block", className)}>
       <img
         className="image-descr__img"
         src={img}

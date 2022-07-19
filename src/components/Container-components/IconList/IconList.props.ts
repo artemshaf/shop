@@ -1,14 +1,9 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
-
-export interface IIconList {
-  icon: JSX.Element;
-  text?: string;
-}
-
+import { IIcon } from "../../../interfaces/Plain/icon";
 export interface IIconListProps
   extends DetailedHTMLProps<
     HTMLAttributes<HTMLUListElement>,
     HTMLUListElement
   > {
-  entities: IIconList[];
+  entities: IIcon[];
 }
