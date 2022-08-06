@@ -71,7 +71,17 @@ main {
   background: none;
   display: none;
 }
-// background-image: url("data:image/svg+xml,%3Csvg width='9' height='16' viewBox='0 0 9 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L8 8L1 15' stroke='%23121212' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
-//swiper
-.image-descr__arrow {
+
+.loader-block {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgb(231, 230, 230);
+  opacity: 0.9;
+  z-index: 100;
 }

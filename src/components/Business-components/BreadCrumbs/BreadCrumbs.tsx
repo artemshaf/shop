@@ -1,5 +1,4 @@
 import cn from "classnames";
-import { log } from "console";
 import { memo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IBreadCrubms } from "./BreadCrumbs.props";
@@ -9,7 +8,6 @@ export const BreadCrumbs = memo(
   ({ last, className, ...props }: IBreadCrubms) => {
     const pathname = useLocation().pathname;
     const pathnames = pathname.split("/").filter((el) => el);
-    console.log(pathnames);
 
     if (pathnames) {
       return (
@@ -22,7 +20,6 @@ export const BreadCrumbs = memo(
           {pathnames.map((ph, index) => {
             const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
             const isLast = index === pathnames.length - 1;
-            console.log(routeTo);
 
             return isLast ? (
               <li className={cn("bread-crumbs__list-item")} key={index}>

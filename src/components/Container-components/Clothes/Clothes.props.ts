@@ -1,5 +1,4 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { Gender, IClothesProducts } from "../../../store/clothes/clothes-slice";
 export interface IParticulars {
   isNewArrivals: boolean;
   isSpecial: boolean;
@@ -39,7 +38,7 @@ export interface IClothesItem {
 export interface IClothesProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   clothes: IClothesItem[];
-  gender: Gender;
+  gender: string;
   particulars?: boolean;
   filters?: boolean;
 }

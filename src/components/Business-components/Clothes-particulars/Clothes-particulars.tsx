@@ -1,12 +1,14 @@
 import { IClothesParticularsProps } from "./Clothes-particulars.props";
 import "./Clothes-particulars.scss";
 import { v4 } from "uuid";
-import { useAppDispatch } from "../../../store/store";
-import { setParticular } from "../../../store/clothes/filters/filters-slice";
+import { useAppDispatch, useAppSelector } from "../../../store/store";
+import {
+  selectParticularByGender,
+  setParticular,
+} from "../../../store/clothes/filters/filters-slice";
 import cn from "classnames";
 
 export const ClothesParticulars = ({
-  particular,
   gender,
   className,
   ...props
@@ -36,6 +38,10 @@ export const ClothesParticulars = ({
 
   const dispatch = useAppDispatch();
 
+  const currParticular = useAppSelector((state) =>
+    selectParticularByGender(state, gender)
+  );
+
   return (
     <ul className={cn("clothes-filter__list", className)} {...props}>
       {items.map((item) => {
@@ -48,7 +54,9 @@ export const ClothesParticulars = ({
           <li
             key={v4()}
             className={cn("clothes-filter__list-item", {
-              "clothes-filter__list-item_active": item.key == particular,
+              "clothes-filter__list-item_active":
+                item.key.toLocaleLowerCase() ==
+                currParticular?.toString().toLocaleLowerCase(),
             })}
             onClick={() => dispatch(setParticular(obj))}
           >

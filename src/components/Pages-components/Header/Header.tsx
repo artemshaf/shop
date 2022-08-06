@@ -5,7 +5,7 @@ import { HeaderNav } from "./HeaderNav/HeaderNav";
 import { InfoPanel } from "../../Container-components/InfoPanel/InfoPanel";
 import { Socials } from "../../Container-components/Socials/Socials";
 import { HeaderKit } from "./HeaderKit/HeaderKit";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export const Header = () => {
   return (
@@ -18,7 +18,9 @@ export const Header = () => {
       </section>
       <section className={cn("header__bottom-panel__container")}>
         <div className="header__bottom-panel container">
-          <Link to='/' ><Logo className={cn("clever-logo")} /></Link>
+          <Link to="/">
+            <Logo className={cn("clever-logo")} />
+          </Link>
           <HeaderNav />
           <HeaderKit />
         </div>

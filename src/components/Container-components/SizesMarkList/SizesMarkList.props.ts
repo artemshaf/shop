@@ -6,4 +6,6 @@ export interface ISizesMarkList
     HTMLUListElement
   > {
   sizes: string[];
+  active: string;
+  setActive: (active: string) => void;
 }

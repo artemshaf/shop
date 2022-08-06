@@ -4,4 +4,25 @@
     display: flex;
     column-gap: 15px;
   }
+
+  &-icon {
+    position: relative;
+    cursor: pointer;
+    &__bag {
+      position: relative;
+      &__badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: rgb(197, 24, 154);
+        color: white;
+        border-radius: 100%;
+        display: flex;
+        font-size: 12px;
+        align-items: center;
+        justify-content: center;
+        padding: 3px 6px 1px 6px;
+      }
+    }
+  }
 }

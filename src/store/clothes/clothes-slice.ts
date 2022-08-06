@@ -1,39 +1,28 @@
-import {
-  createAsyncThunk,
-  createEntityAdapter,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Root } from "react-dom/client";
 import {
   IClothesItem,
   IParticulars,
-  ParticularsFilters,
 } from "../../components/Container-components/Clothes/Clothes.props";
-import { PRODUCTS } from "../../data/products";
-import { RootState } from "../store";
-import {
-  initialStateParticulars,
-  selectFilterByGender,
-} from "./filters/filters-slice";
+import { IThunkApi, RootState } from "../store";
 
-// INTERFACE FOR ALL CLOTHES
+// ! INTERFACE FOR ALL CLOTHES
 export interface IClothes {
-  isLoading: string;
+  isLoading: boolean;
   error: null | string;
-  clothes: IClothesProducts[];
+  clothes: IProducts;
 }
 
-// INTERFACE EACH CLOTHES GENDER
-export interface IClothesProducts {
-  isLoading: string;
-  error: null | string;
-  clothes: IClothesItem[];
-  particulars: IParticulars;
-  filters: string[];
+interface IClothesFilters {
+  color: string[];
+  sizes: string[];
+  brand: string[];
+  price: string[];
 }
 
 export interface IProducts {
-  [index: string]: IClothesItem[];
+  men: any[];
+  women: any[];
 }
 
 export interface IObjectPlug {
@@ -42,39 +31,48 @@ export interface IObjectPlug {
 
 export const name = "@@clothes";
 
-const genIClothes = (products: IProducts): any => {
-  const result: IObjectPlug = {};
-  const keys = Object.keys(products);
-  keys.map((key) => {
-    const object = {
-      isLoading: "idle",
-      error: null,
-      clothes: products[key],
-    };
-    result[key] = object;
-  });
-  return result;
-};
-
-genIClothes(PRODUCTS);
-
 export const initialState: IClothes = {
-  isLoading: "idle",
+  isLoading: false,
   error: null,
-  clothes: genIClothes(PRODUCTS),
+  clothes: {
+    women: [],
+    men: [],
+  },
 };
 
-export type Gender = keyof IProducts;
+export const getClothes = createAsyncThunk<void, void, IThunkApi>(
+  name + "/GET_CLOTHES",
+  async (_, { rejectWithValue, extra: { client, api } }) => {
+    try {
+      return (await client.get(api.URL_PRODUCTS)).data;
+    } catch (error) {
+      return rejectWithValue(error || "Failed to load clothes");
+    }
+  }
+);
 
-export const clothesAdapter = createEntityAdapter({
-  selectId: (thing: IClothesItem) => thing.id,
-});
+export const getClothesByCategory = createAsyncThunk<string, string, IThunkApi>(
+  name + "/GET_CLOTHES_BY_CATEGORY",
+  async (category: string, { rejectWithValue, extra: { client, api } }) => {
+    try {
+      if (category.toLocaleLowerCase() === "all") {
+        return (await client.post(api.URL_PRODUCTS)).data;
+      }
+      return (await client.post(api.URL_CATEGORY + category)).data;
+    } catch (error) {
+      return rejectWithValue(error || "Failed to load clothes");
+    }
+  }
+);
 
-export const getDataByGender = createAsyncThunk(
-  name + "/GET_DATA_BY_GENDER",
-  async (gender: any, api) => {
-    const appState = api.getState() as RootState;
-    return appState.clothes.clothes[gender];
+export const getClothesById = createAsyncThunk<string, string, IThunkApi>(
+  name + "/GET_CLOTH_BY_ID",
+  async (id: string, { rejectWithValue, extra: { client, api } }) => {
+    try {
+      return (await client.post(api.URL_PRODUCT + id)).data;
+    } catch (error) {
+      return rejectWithValue(error || "Failed to load clothes");
+    }
   }
 );
 
@@ -84,60 +82,128 @@ export const clothesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getDataByGender.pending, (state) => {
-        state.isLoading = "loading";
+      .addCase(getClothes.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
       })
-      .addCase(getDataByGender.rejected, (state) => {
-        state.isLoading = "idle";
+      .addCase(getClothes.rejected, (state) => {
+        state.isLoading = false;
         state.error = "Something went wrong!";
       })
+      .addCase(getClothes.fulfilled, (state, action: PayloadAction<any>) => {
+        console.log(action.payload);
+        state.isLoading = false;
+        state.error = null;
+        state.clothes = action.payload;
+      })
       .addCase(
-        getDataByGender.fulfilled,
-        (state, action: PayloadAction<any>) => {
-          state.clothes[action.payload] = action.payload;
-        }
+        getClothesByCategory.fulfilled,
+        (state, action: PayloadAction<any>) => action.payload
+      )
+      .addCase(
+        getClothesById.fulfilled,
+        (state, action: PayloadAction<IClothesItem | any>) => action.payload
       );
   },
 });
 
 export const clothesReducer = clothesSlice.reducer;
 
-export const selectClothesByGender = (state: RootState, gender: any) =>
-  state.clothes.clothes[gender].clothes;
+export const selectClothesByIds = (state: RootState, ids: string[]) => {
+  const result: IClothesItem[] = [];
+  const ref: IObjectPlug = state.clothes.clothes;
+  for (const key in ref) {
+    ref[key].map((item: IClothesItem) => {
+      if (ids.includes(item.id)) {
+        result.push(item);
+      }
+      return;
+    });
+  }
+  return result;
+};
 
-export const selectClothesByParticulars = (items: any[], filter: any) =>
-  items.filter((item) => item.particulars[filter]);
+export const selectIsLoading = (state: RootState) => state.clothes.isLoading;
+export const selectError = (state: RootState) => state.clothes.error;
+
+const getDataByGender = (state: RootState, gender: keyof IProducts) => {
+  return state.clothes.clothes[gender];
+};
+
+export const selectClothes = (state: RootState) =>
+  state.clothes.clothes.men.concat(state.clothes.clothes.women);
+
+export const selectClothesByGender = (
+  state: RootState,
+  gender: keyof IProducts
+): IClothesItem[] => state.clothes.clothes[gender];
+
+export const selectClothesByParticulars = (
+  items: IClothesItem[],
+  filter: keyof IParticulars
+) => items.filter((item) => item.particulars[filter]);
 
 export const selectClothByGenderAndId = (
   state: RootState,
-  gender: any,
-  id: any
+  gender: keyof IProducts,
+  id: string
 ) => {
   const ref = selectClothesByGender(state, gender);
   return ref.find((item) => item.id === id);
 };
 
+export const selectClothById = (state: RootState, id: string) => {
+  const res = state.clothes.clothes.men.find((item) => item.id === id);
+
+  return (
+    selectClothByGenderAndId(state, "men", id) ||
+    selectClothByGenderAndId(state, "women", id)
+  );
+};
+
 export const selectClothesByGenderAndFilters = (
-  state: RootState,
-  gender: any
+  filters: IClothesFilters,
+  clothes: IClothesItem[]
 ) => {
-  const ref = selectClothesByGender(state, gender).slice();
-  const filters = selectFilterByGender(state, gender);
+  let result = clothes.slice();
 
-  if (filters.color.length > 0) {
-    ref.filter((item) =>
-      filters.color
-        .map((item: any) => item.toLowerCase())
-        .includes(...item.images.map((imgs) => imgs.color))
-    );
-  } else if (filters.sizes.length > 0) {
-    ref.filter((item) =>
-      filters.sizes
-        .map((item: any) => item.toLowerCase())
-        .includes(...item.sizes.map((size) => size.toLocaleLowerCase()))
-    );
-    console.log(2);
+  if (filters.brand.length > 0) {
+    result = result.filter((item) => filters.brand.includes(item.brand));
   }
+  if (filters.color.length > 0) {
+    result = result.filter(
+      (item) =>
+        item.images.filter((img) =>
+          filters.color
+            .map((f) => f.toLocaleLowerCase())
+            .includes(img.color.toLocaleLowerCase())
+        ).length
+    );
+  }
+  if (filters.price.length > 0) {
+    console.log("filters.price");
 
-  return ref;
+    result = result.filter((item) => {
+      if (
+        filters.price.map((fP) => +fP).filter((fP) => fP < item.price).length >
+        0
+      ) {
+        return item;
+      }
+      return null;
+    });
+  }
+  if (filters.sizes.length > 0) {
+    console.log("filters.sizes");
+
+    result = result.filter(
+      (item) =>
+        item.sizes.filter((s) =>
+          filters.sizes
+            .map((f) => f.toLocaleLowerCase())
+            .includes(s.toLocaleLowerCase())
+        ).length
+    );
+  }
+  return result;
 };

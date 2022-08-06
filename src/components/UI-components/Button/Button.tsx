@@ -3,10 +3,12 @@ import { ButtonProps } from "./Button.props";
 import "./Button.scss";
 
 export const Button = ({
+  disabled = false,
   appearence,
   className,
   children,
   size = "sm",
+  ...props
 }: ButtonProps) => {
   return (
     <button
@@ -20,6 +22,8 @@ export const Button = ({
         },
         className
       )}
+      disabled={disabled}
+      {...props}
     >
       {children}
     </button>

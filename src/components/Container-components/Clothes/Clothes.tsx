@@ -1,10 +1,6 @@
 import cn from "classnames";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  selectClothesByGenderAndFilters,
-  selectClothesByParticulars,
-} from "../../../store/clothes/clothes-slice";
 import { selectParticularByGender } from "../../../store/clothes/filters/filters-slice";
 import { useAppSelector } from "../../../store/store";
 import { ClothesFilters } from "../../Business-components/Clothes-filters/Clothes-filters";
@@ -13,7 +9,7 @@ import { FilterPanel } from "../../Business-components/FilterPanel/FilterPanel";
 import { Button } from "../../UI-components/Button/Button";
 import { H } from "../../UI-components/H/H";
 import { ClothesList } from "../ClothesList/ClothesList";
-import { IClothesItem, IClothesProps } from "./Clothes.props";
+import { IClothesProps } from "./Clothes.props";
 import "./Clothes.scss";
 
 export const Clothes = ({
@@ -24,28 +20,11 @@ export const Clothes = ({
   className,
   ...props
 }: IClothesProps) => {
-  let currParticulars: any;
-  let constructedClothes: IClothesItem[] = [];
-
   const [openFilter, setOpenFilter] = useState<boolean>(false);
 
   const handleSetOpenFilter = () => {
     setOpenFilter(!openFilter);
   };
-
-  if (particulars) {
-    currParticulars = useAppSelector((state) =>
-      selectParticularByGender(state, gender)
-    ) as string;
-    constructedClothes = useAppSelector(() =>
-      selectClothesByParticulars(clothes, currParticulars)
-    );
-  } else if (filters) {
-    constructedClothes = useAppSelector(
-      (state) =>
-        selectClothesByGenderAndFilters(state, gender) as IClothesItem[]
-    );
-  }
 
   return (
     <section className="container clothes__container">
@@ -54,7 +33,7 @@ export const Clothes = ({
           <H size="ex-lg" className="clothes__top-panel__info-title">
             {gender}'S
           </H>
-          <ClothesParticulars gender={gender} particular={currParticulars} />
+          <ClothesParticulars gender={gender} />
         </div>
       )}
       {filters && (
@@ -68,7 +47,7 @@ export const Clothes = ({
           />
         </>
       )}
-      <ClothesList clothes={constructedClothes} />
+      <ClothesList clothes={clothes} />
       <Link to={`/${gender}`}>
         <Button
           appearence="light"

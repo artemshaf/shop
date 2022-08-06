@@ -1,0 +1,43 @@
+.modal {
+  background-color: white;
+  pointer-events: all;
+  padding: 30px;
+  border-radius: 20px;
+  transition: var(--transition-md);
+  transform: scale(0.2);
+  opacity: 0;
+
+  &__container {
+    transition: var(--transition-md);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+
+    &.active {
+      background: rgba(0, 0, 0, 0.6);
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+
+  &.active {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  &__btn_close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 26px;
+    padding: 7px;
+  }
+}

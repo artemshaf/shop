@@ -1,0 +1,82 @@
+.shopping-card__items-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  row-gap: 15px;
+  text-transform: capitalize;
+  height: calc(100% - 160px);
+
+  overflow-y: auto;
+  &-item {
+    display: grid;
+    grid-template-columns: 80px auto;
+    column-gap: 10px;
+    width: 100%;
+    padding-bottom: 10px;
+    border-bottom: 2px solid grey;
+    &__img {
+      width: 80px;
+      height: 100px;
+      object-fit: cover;
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+
+      &__actions {
+        display: flex;
+        align-items: center;
+        margin-top: auto;
+
+        &__count {
+          &-block {
+            background: var(--grey);
+            display: flex;
+            align-items: center;
+          }
+
+          &_inc {
+            appearance: none;
+            border: none;
+            background: none;
+            padding: 0 5px;
+            font-size: 20px;
+            border: 2px solid var(--dark);
+            cursor: pointer;
+            width: 25px;
+            opacity: 0.5;
+          }
+          &_dec {
+            appearance: none;
+            border: none;
+            font-size: 20px;
+            background: none;
+            width: 25px;
+            cursor: pointer;
+            opacity: 0.5;
+            border: 2px solid var(--dark);
+          }
+          &_text {
+            margin: 0 5px;
+          }
+        }
+
+        &__price {
+          margin-left: 10px;
+        }
+        &__trash {
+          margin-left: auto;
+          cursor: pointer;
+          margin-right: 12px;
+        }
+      }
+    }
+  }
+  &_empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: hidden;
+  }
+}

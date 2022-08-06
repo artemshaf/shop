@@ -13,10 +13,9 @@ export const setFalseAllField = (object: any) => {
 
 export const setParticular = createAsyncThunk(
   name + "/SET_PARTICULARS",
-  async (obj: any, api) => {
+  async (obj: any) => {
     const particular = obj.particular as keyof IParticulars;
     const gender = obj.gender as any;
-    // const appState = api.getState() as RootState;
 
     return { particular, gender };
   }
@@ -99,7 +98,7 @@ export const selectParticularByGender = (state: any, gender: any) => {
   for (const key in partObj) {
     if (Object.prototype.hasOwnProperty.call(partObj, key)) {
       if (partObj[key]) {
-        return key;
+        return key as keyof IParticulars;
       }
     }
   }

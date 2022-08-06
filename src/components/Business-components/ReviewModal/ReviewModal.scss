@@ -1,0 +1,18 @@
+.review-modal {
+  display: flex;
+  flex-direction: column;
+  &__title {
+    margin: 10px 0;
+  }
+  &__field {
+    margin: 10px 0;
+  }
+  &__rating {
+    display: flex;
+  }
+  &_error {
+    color: red;
+    text-align: center;
+    font-size: 20px;
+  }
+}

@@ -6,7 +6,8 @@ import React, {
 } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, useLocation } from "react-router-dom";
-import { rootStore } from "../../../store/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor, rootStore } from "../../../store/store";
 import { Footer } from "../Footer/Footer";
 import { Header } from "../Header/Header";
 
@@ -47,9 +48,11 @@ export const withLayout = <T extends Record<string, unknown>>(
     return (
       <BrowserRouter>
         <Provider store={rootStore}>
-          <Layout>
-            <Component {...props} />
-          </Layout>
+          <PersistGate loading={null} persistor={persistor}>
+            <Layout>
+              <Component {...props} />
+            </Layout>
+          </PersistGate>
         </Provider>
       </BrowserRouter>
     );

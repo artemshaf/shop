@@ -6,5 +6,7 @@ export interface IRatingProps
     HTMLUListElement
   > {
   rate: number;
+  setRate?: (rate: number) => void;
   count?: number;
+  isEditable?: boolean;
 }

@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import cn from "classnames";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import SwiperCore, { Lazy, Navigation, Thumbs } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore, {
+  Lazy,
+  Navigation,
+  Thumbs,
+  Controller,
+  FreeMode,
+} from "swiper";
+import { Swiper, SwiperProps, SwiperSlide, useSwiper } from "swiper/react";
 import { ReactComponent as HeartIcon } from "../../imgs/main/heart.svg";
 import { ReactComponent as ScaleIcon } from "../../imgs/main/scale.svg";
 import { PaymentsList } from "../../components/Container-components/PaymentsList/PaymentsList";
@@ -12,21 +18,85 @@ import { ServiceInfo } from "../../components/Container-components/ServiceInfo/S
 import { SizesMarkList } from "../../components/Container-components/SizesMarkList/SizesMarkList";
 import { TopDetailInfo } from "../../components/Container-components/TopDetailInfo/TopDetailInfo";
 import { Button } from "../../components/UI-components/Button/Button";
-import { H } from "../../components/UI-components/H/H";
 import { GET_IMAGE_URL } from "../../helpers/generateUrl";
 import { selectClothByGenderAndId } from "../../store/clothes/clothes-slice";
-import { useAppSelector } from "../../store/store";
+import { useAppDispatch, useAppSelector } from "../../store/store";
 import { IProductPage } from "./ProductPage.props";
+import { addToShoppingCard } from "../../store/shopping-card/shopping-card-slice";
+import ArrowDown from "../../imgs/icons/arrow-down.svg";
 import "./ProductPage.scss";
-import { ClothesItem } from "../../components/Container-components/ClothesList/ClothesItem/ClothesItem";
+import ReviewModal from "../../components/Business-components/ReviewModal/ReviewModal";
 
 export const ProductPage = ({ className, ...props }: IProductPage) => {
   const { sex, id } = useParams();
   const cloth = useAppSelector((state) =>
-    selectClothByGenderAndId(state, sex, id)
+    selectClothByGenderAndId(
+      state,
+      sex === "men" ? "men" : "women",
+      id as string
+    )
   );
+  const [openReviewModal, setOpenReviewModal] = useState<boolean>(false);
+  const [activeSize, setActiveSize] = useState<string>("");
 
-  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore>();
+  const navigationPrevRef = useRef<HTMLButtonElement>(null);
+  const navigationNextRef = useRef<HTMLButtonElement>(null);
+
+  const dispatch = useAppDispatch();
+
+  const [activeThumb, setActiveThumb] = useState<SwiperCore>();
+
+  const leftSwiperParams: SwiperProps = {
+    className: "product-page__imgs__list",
+    direction: "vertical",
+    modules: [Thumbs, Navigation, Lazy],
+    lazy: true,
+    freeMode: true,
+    navigation: {
+      nextEl: navigationNextRef.current ? navigationNextRef.current : undefined,
+      prevEl: navigationPrevRef.current ? navigationPrevRef.current : undefined,
+    },
+    breakpoints: {
+      767: {
+        direction: "vertical",
+      },
+      0: {
+        direction: "horizontal",
+      },
+    },
+    slidesPerView: 4.4,
+    loopedSlides: 1,
+    spaceBetween: 15,
+    onBeforeInit(swiper) {
+      swiper.navigation.prevEl = navigationNextRef.current!;
+      swiper.navigation.nextEl = navigationNextRef.current!;
+      swiper.navigation.init();
+      swiper.navigation.update();
+    },
+
+    onSwiper: setActiveThumb,
+  };
+
+  const rightSwiperParams: SwiperProps = {
+    className: "product-page__imgs__main-img__slider",
+    modules: [FreeMode, Thumbs, Navigation, Lazy],
+    lazy: true,
+    navigation: {
+      nextEl: navigationNextRef.current,
+      prevEl: navigationPrevRef.current,
+    },
+    slidesPerView: 1,
+    spaceBetween: 0,
+    onBeforeInit(swiper) {
+      swiper.navigation.prevEl = navigationNextRef.current!;
+      swiper.navigation.nextEl = navigationNextRef.current!;
+      swiper.navigation.init();
+      swiper.navigation.update();
+    },
+    thumbs: {
+      swiper: activeThumb,
+    },
+  };
 
   const uniqueColors = [...new Set(cloth?.images.map((image) => image.color))];
   const uniqueColorsImages = [
@@ -34,59 +104,44 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
   ];
 
   return (
-    <>
+    <section {...props}>
       <TopDetailInfo
         sex={cloth?.category as string}
         breadcrumbsLast={cloth?.name}
       />
       <section className="product-page__container container">
-        <div className="product-page__imgs__container">
-          <div>
-            <Swiper
-              className="product-page__imgs__list"
-              onSwiper={setThumbsSwiper}
-              direction={"vertical"}
-              modules={[Navigation, Thumbs]}
-              watchSlidesProgress={true}
-              slidesPerView={4}
-              navigation={{
-                nextEl: ".image-descr__arrow",
-                prevEl: ".image-descr__arrow_rotate",
-              }}
-              onInit={(swiper) => {
-                swiper.navigation.init();
-                swiper.navigation.update();
-              }}
-            >
-              {cloth?.images.map((img) => (
-                <SwiperSlide key={img.id}>
-                  <img
-                    className="product-page__imgs__list-item__img"
-                    src={GET_IMAGE_URL(img.url)}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-            {/* <div className="image-descr__arrow-block">
-              <div className="image-descr__arrow"></div>
-              <div className="image-descr__arrow_rotate"></div>
-            </div> */}
-          </div>
-          <Swiper
-            className="product-page__imgs__main-img__slider"
-            slidesPerView={1}
-            direction={"horizontal"}
-            thumbs={{ swiper: thumbsSwiper }}
-            modules={[Navigation, Thumbs]}
-            navigation={{
-              nextEl: ".image-descr__arrow",
-              prevEl: ".image-descr__arrow_rotate",
-            }}
-            onInit={(swiper) => {
-              swiper.navigation.init();
-              swiper.navigation.update();
-            }}
-          >
+        <section className="product-page__imgs__container">
+          <Swiper {...leftSwiperParams}>
+            <div className="navigations">
+              <button className="navigations_next" ref={navigationNextRef}>
+                <img src={ArrowDown} alt="" />
+              </button>
+              <button className="navigations_prev" ref={navigationPrevRef}>
+                <img src={ArrowDown} alt="" />
+              </button>
+            </div>
+            {cloth?.images.map((img) => (
+              <SwiperSlide key={img.id}>
+                <img
+                  className="product-page__imgs__list-item__img"
+                  src={GET_IMAGE_URL(img.url)}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          <Swiper {...rightSwiperParams}>
+            <div className="navigations__img">
+              <button
+                className="navigations__img_next"
+                ref={navigationNextRef}
+                onClick={() => console.log("+")}
+              >
+                +++
+              </button>
+              <button className="navigations__img_prev" ref={navigationPrevRef}>
+                ----
+              </button>
+            </div>
             {cloth?.images.map((img) => (
               <SwiperSlide
                 key={img.id}
@@ -99,7 +154,7 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
               </SwiperSlide>
             ))}
           </Swiper>
-        </div>
+        </section>
         <section className="product-page__descr__container">
           <div>
             <div>
@@ -128,8 +183,10 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
                   <span>SIZE: {cloth?.sizes[0]}</span>
                   <ul className="product-page__descr__size-list">
                     <SizesMarkList
-                      className="product-page__descr__size-list-item"
                       sizes={cloth.sizes}
+                      active={activeSize}
+                      setActive={setActiveSize}
+                      className="product-page__descr__size-list-item"
                     />
                   </ul>
                 </>
@@ -142,7 +199,23 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
               <Button
                 className={cn("product-page__descr__actions-btn")}
                 appearence="dark"
+                disabled={activeSize === "" ? true : false}
                 size="lg"
+                onClick={() => {
+                  activeSize !== ""
+                    ? dispatch(
+                        addToShoppingCard({
+                          name: cloth?.name as string,
+                          id: cloth?.id as string,
+                          price: cloth?.price as number,
+                          count: 1,
+                          size: activeSize,
+                          color: cloth?.images[0].color as string,
+                          img: cloth?.images[0].url as string,
+                        })
+                      )
+                    : null;
+                }}
               >
                 ADD TO CART
               </Button>
@@ -219,9 +292,16 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
                       count={cloth?.reviews.length}
                       className="product-page__descr__reviews-rate"
                     />
-                    <div className="product-page__descr__reviews-info__write">
+                    <div
+                      className="product-page__descr__reviews-info__write"
+                      onClick={() => setOpenReviewModal(true)}
+                    >
                       Write A Review
                     </div>
+                    <ReviewModal
+                      setOpen={setOpenReviewModal}
+                      open={openReviewModal}
+                    />
                   </div>
                   <ul className="product-page__descr__reviews-list">
                     {cloth?.reviews.map((review) => (
@@ -247,6 +327,6 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
           </div>
         </section>
       </section>
-    </>
+    </section>
   );
 };

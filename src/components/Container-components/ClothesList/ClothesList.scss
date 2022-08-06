@@ -33,13 +33,6 @@
       background-color: var(--sale);
       position: absolute;
       color: var(--white);
-
-      &::before {
-        content: "-";
-      }
-      &::after {
-        content: " %";
-      }
     }
 
     &__img {

@@ -15,8 +15,8 @@ export const FilterPanel = ({
 }: IFilterPanelProps) => {
   const filters = {
     color: ["black", "Cyan", "Green", "Grey", "White", "Blue"],
-    sizes: ["XL", "L", "M", "S", "XS"],
-    brand: ["Ck", "H&M", "Kalles", "Levi's", "Monki", "Nike"],
+    sizes: ["XXL INT", "3XL INT", "XL", "s INT", "M", "S", "XS", "M INT"],
+    brand: ["Brave Soul", "H&M", "Jack & Jones", "Levi's", "Monki", "Nike"],
     price: ["1200", "600", "400", "300", "200", "100", "20", "7"],
   };
 
