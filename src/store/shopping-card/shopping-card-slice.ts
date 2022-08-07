@@ -36,8 +36,15 @@ export const addToShoppingCard = createAsyncThunk(
   }
 );
 
-export const changeCountToShoppingCard = createAsyncThunk(
-  name + "/CHANGE_COUNT",
+export const incCountToShoppingCard = createAsyncThunk(
+  name + "/INC_CHANGE_COUNT",
+  async (props: IClothesChangeCount, { extra: api }) => {
+    return props;
+  }
+);
+
+export const decCountToShoppingCard = createAsyncThunk(
+  name + "/DEC_CHANGE_COUNT",
   async (props: IClothesChangeCount, { extra: api }) => {
     return props;
   }
@@ -87,36 +94,53 @@ export const shoppingCardSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(
-        changeCountToShoppingCard.fulfilled,
+        incCountToShoppingCard.fulfilled,
         (state, action: PayloadAction<IClothesChangeCount>) => {
-          const item = state.clothes
-            .find((item) => item.id == action.payload.id)
-            ?.sizes.find(
-              (item) =>
-                item.color === action.payload.color &&
-                item.size === action.payload.size
-            );
-          if (item?.count) {
-            if (item?.count == 1 && action.payload.count === -1) {
-              return;
-            }
-            item.count += action.payload.count;
-          }
+          state.clothes.map(
+            (item) =>
+              item.id === action.payload.id &&
+              item.sizes.map((currentItem) =>
+                currentItem.size === action.payload.size
+                  ? (currentItem.count += action.payload.count)
+                  : currentItem
+              )
+          );
+          return;
+        }
+      )
+      .addCase(
+        decCountToShoppingCard.fulfilled,
+        (state, action: PayloadAction<IClothesChangeCount>) => {
+          state.clothes.map(
+            (item) =>
+              item.id === action.payload.id &&
+              item.sizes.map(
+                (currentItem) =>
+                  currentItem.size === action.payload.size &&
+                  (currentItem.count > 1
+                    ? (currentItem.count += action.payload.count)
+                    : currentItem)
+              )
+          );
+          return;
         }
       )
       .addCase(
         removeFromShoppingCard.fulfilled,
         (state, action: PayloadAction<IClothesRemove>) => {
-          state.clothes = state.clothes.filter(
-            (item) =>
-              item.id !== action.payload.id &&
-              item.sizes.filter(
-                (item) =>
-                  item.size === action.payload.size &&
-                  item.color === action.payload.color
-              )
-          );
-          return state;
+          return {
+            error: state.error,
+            isLoading: state.isLoading,
+            clothes: state.clothes.filter(
+              (item) =>
+                item.id !== action.payload.id &&
+                item.sizes.filter(
+                  (item) =>
+                    item.size === action.payload.size &&
+                    item.color === action.payload.color
+                )
+            ),
+          };
         }
       )
       .addCase(addToShoppingCard.pending, (state) => {
@@ -193,6 +217,12 @@ export const selectAllProductId = (state: RootState) =>
 
 export const selectAllProducts = (state: RootState) =>
   state.shoppingCard.clothes;
+
+export const selectAllProductsCount = (state: RootState) =>
+  state.shoppingCard.clothes.reduce((acc, item) => {
+    item.sizes?.map((sizeItem) => (acc += sizeItem.count));
+    return acc;
+  }, 0);
 
 export const selectAllProductPrice = (state: RootState) => {
   // eslint-disable-next-line @typescript-eslint/no-inferrable-types

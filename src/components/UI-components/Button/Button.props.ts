@@ -10,6 +10,7 @@ export interface ButtonProps
     HTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
   > {
+  type?: "button" | "submit" | "reset" | undefined;
   children: ReactNode | ReactElement;
   appearence: "light" | "dark";
   size?: "lg" | "sm";

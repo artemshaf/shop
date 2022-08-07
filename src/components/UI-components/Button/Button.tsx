@@ -4,6 +4,7 @@ import "./Button.scss";
 
 export const Button = ({
   disabled = false,
+  type,
   appearence,
   className,
   children,
@@ -12,6 +13,7 @@ export const Button = ({
 }: ButtonProps) => {
   return (
     <button
+      type={type}
       className={cn(
         "button button_text",
         {

@@ -37,7 +37,14 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
     )
   );
   const [openReviewModal, setOpenReviewModal] = useState<boolean>(false);
-  const [activeSize, setActiveSize] = useState<string>("");
+
+  const [activeSize, setActiveSize] = useState<string>(
+    cloth?.sizes[0] as string
+  );
+
+  const [activeColor, setActiveColor] = useState<string>(
+    cloth?.images[0].color as string
+  );
 
   const navigationPrevRef = useRef<HTMLButtonElement>(null);
   const navigationNextRef = useRef<HTMLButtonElement>(null);
@@ -45,6 +52,9 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
   const dispatch = useAppDispatch();
 
   const [activeThumb, setActiveThumb] = useState<SwiperCore>();
+  const [controlledSwiper, setControlledSwiper] = useState<SwiperCore>();
+  const setNext = () => controlledSwiper?.slideNext();
+  const setPrev = () => controlledSwiper?.slidePrev();
 
   const leftSwiperParams: SwiperProps = {
     className: "product-page__imgs__list",
@@ -52,10 +62,6 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
     modules: [Thumbs, Navigation, Lazy],
     lazy: true,
     freeMode: true,
-    navigation: {
-      nextEl: navigationNextRef.current ? navigationNextRef.current : undefined,
-      prevEl: navigationPrevRef.current ? navigationPrevRef.current : undefined,
-    },
     breakpoints: {
       767: {
         direction: "vertical",
@@ -73,7 +79,6 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
       swiper.navigation.init();
       swiper.navigation.update();
     },
-
     onSwiper: setActiveThumb,
   };
 
@@ -81,10 +86,6 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
     className: "product-page__imgs__main-img__slider",
     modules: [FreeMode, Thumbs, Navigation, Lazy],
     lazy: true,
-    navigation: {
-      nextEl: navigationNextRef.current,
-      prevEl: navigationPrevRef.current,
-    },
     slidesPerView: 1,
     spaceBetween: 0,
     onBeforeInit(swiper) {
@@ -96,6 +97,7 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
     thumbs: {
       swiper: activeThumb,
     },
+    onSwiper: setControlledSwiper,
   };
 
   const uniqueColors = [...new Set(cloth?.images.map((image) => image.color))];
@@ -113,10 +115,18 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
         <section className="product-page__imgs__container">
           <Swiper {...leftSwiperParams}>
             <div className="navigations">
-              <button className="navigations_next" ref={navigationNextRef}>
+              <button
+                className="navigations_next"
+                ref={navigationNextRef}
+                onClick={() => setNext()}
+              >
                 <img src={ArrowDown} alt="" />
               </button>
-              <button className="navigations_prev" ref={navigationPrevRef}>
+              <button
+                className="navigations_prev"
+                ref={navigationPrevRef}
+                onClick={() => setPrev()}
+              >
                 <img src={ArrowDown} alt="" />
               </button>
             </div>
@@ -130,18 +140,6 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
             ))}
           </Swiper>
           <Swiper {...rightSwiperParams}>
-            <div className="navigations__img">
-              <button
-                className="navigations__img_next"
-                ref={navigationNextRef}
-                onClick={() => console.log("+")}
-              >
-                +++
-              </button>
-              <button className="navigations__img_prev" ref={navigationPrevRef}>
-                ----
-              </button>
-            </div>
             {cloth?.images.map((img) => (
               <SwiperSlide
                 key={img.id}
@@ -153,6 +151,20 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
                 />
               </SwiperSlide>
             ))}
+            <button
+              className="navigations_next"
+              ref={navigationNextRef}
+              onClick={() => setNext()}
+            >
+              <img src={ArrowDown} alt="" />
+            </button>
+            <button
+              className="navigations_prev"
+              ref={navigationPrevRef}
+              onClick={() => setPrev()}
+            >
+              <img src={ArrowDown} alt="" />
+            </button>
           </Swiper>
         </section>
         <section className="product-page__descr__container">
@@ -160,12 +172,16 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
             <div>
               {cloth?.images && (
                 <>
-                  <span>COLOR: {cloth?.images[0].color}</span>
+                  <span>COLOR: {activeColor || "Not selected"}</span>
                   <ul className="product-page__descr__color-list">
                     {uniqueColorsImages.map((img) => (
                       <li
                         key={img.id}
-                        className="product-page__descr__color-list-item product-page__descr__color-list-item_active"
+                        className={cn("product-page__descr__color-list-item", {
+                          "product-page__descr__color-list-item_active":
+                            img.color === activeColor,
+                        })}
+                        onClick={() => setActiveColor(img.color)}
                       >
                         <img
                           className="product-page__descr__color-list-item__img"
@@ -180,7 +196,7 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
             <div className="product-page__descr__size__container">
               {cloth?.sizes && (
                 <>
-                  <span>SIZE: {cloth?.sizes[0]}</span>
+                  <span>SIZE: {activeSize || "Not selected"}</span>
                   <ul className="product-page__descr__size-list">
                     <SizesMarkList
                       sizes={cloth.sizes}
@@ -210,8 +226,10 @@ export const ProductPage = ({ className, ...props }: IProductPage) => {
                           price: cloth?.price as number,
                           count: 1,
                           size: activeSize,
-                          color: cloth?.images[0].color as string,
-                          img: cloth?.images[0].url as string,
+                          color: activeColor,
+                          img: cloth?.images.find(
+                            (item) => item.color === activeColor
+                          )?.url as string,
                         })
                       )
                     : null;

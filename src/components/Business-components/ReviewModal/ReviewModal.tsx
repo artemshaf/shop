@@ -8,7 +8,7 @@ import Textarea from "../../UI-components/Textarea/Textarea";
 import { IReviewModalProps } from "./ReviewModal.props";
 import "./ReviewModal.scss";
 
-export type Inputs = {
+export type Fields = {
   name: string;
   rating: number;
   description: string;
@@ -26,9 +26,9 @@ const ReviewModal = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<Fields>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Fields> = (data) => console.log(data);
   return (
     <Modal
       className={cn("review-modal", className)}

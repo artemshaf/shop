@@ -1,6 +1,6 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 import { UseFormRegister } from "react-hook-form";
-import { Inputs } from "../../Business-components/ReviewModal/ReviewModal";
+import { Fields } from "../../Business-components/ReviewModal/ReviewModal";
 
 export interface InputProps
   extends DetailedHTMLProps<
@@ -10,7 +10,7 @@ export interface InputProps
   value?: string;
   onHandle?: (val: string) => void;
   type?: string;
-  register?: UseFormRegister<Inputs>;
+  register?: UseFormRegister<Fields>;
   label?: any;
   required?: boolean;
 }

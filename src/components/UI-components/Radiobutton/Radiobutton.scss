@@ -1,11 +1,11 @@
 .radio-btn {
   appearance: none;
   display: block;
-
   &__container {
     position: relative;
     cursor: pointer;
-
+    display: block;
+    margin: 15px 0;
     &:hover + .radio-fake {
       border-color: var(--dark);
     }

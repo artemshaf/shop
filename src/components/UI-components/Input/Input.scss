@@ -5,12 +5,16 @@
   padding: 15px;
   background-color: var(--grey-white);
   font-weight: 600;
+  width: 100%;
 
   &__container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 
-  &__subtutle {
-    margin-bottom: 8px;
+  &__subtitle {
+    margin: 4px 0;
     text-transform: uppercase;
   }
 

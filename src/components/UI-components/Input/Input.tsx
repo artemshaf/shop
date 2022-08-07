@@ -20,8 +20,8 @@ export const Input = forwardRef(
     ref: ForwardedRef<HTMLInputElement>
   ) => {
     return (
-      <div className={cn("input__container")}>
-        <span className="input__subtitle subtitle_text">{children}</span>
+      <label className={cn("input__container")}>
+        <h5 className="input__subtitle">{children}</h5>
         <input
           ref={ref}
           className={cn("input body_text", className)}
@@ -31,7 +31,7 @@ export const Input = forwardRef(
           placeholder={placeholder}
           {...props}
         />
-      </div>
+      </label>
     );
   }
 );

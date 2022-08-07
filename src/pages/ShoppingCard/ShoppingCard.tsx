@@ -11,6 +11,9 @@ import ItemList from "./ItemList/ItemList";
 import { IShoppingCardProps } from "./ShoppingCard.props";
 import Close from "../../imgs/icons/close.svg";
 import "./ShoppingCard.scss";
+import { useMemo, useState } from "react";
+import Delivery from "./Delivery/Delivery";
+import { useNavigate } from "react-router-dom";
 
 const ShoppingCard = ({
   open,
@@ -18,9 +21,41 @@ const ShoppingCard = ({
   className,
   ...props
 }: IShoppingCardProps) => {
-  const ids = useAppSelector((state) => selectAllProductId(state));
   const shoppingItems = useAppSelector((state) => selectAllProducts(state));
   const totalPrice = useAppSelector((state) => selectAllProductPrice(state));
+  const [activeRoute, setActiveRoute] = useState<number>(0);
+  const navigate = useNavigate();
+
+  const routes = useMemo(
+    () => [
+      {
+        component: (
+          <ItemList
+            shoppingItems={shoppingItems}
+            setActiveRoute={setActiveRoute}
+            index={0}
+          />
+        ),
+        link: "Item in cart",
+      },
+      {
+        component: <Delivery setActiveRoute={setActiveRoute} index={1} />,
+        link: "Delivery info",
+      },
+      {
+        component: (
+          <ItemList
+            shoppingItems={shoppingItems}
+            setActiveRoute={setActiveRoute}
+            index={-1}
+          />
+        ),
+        link: "Payments",
+      },
+    ],
+    []
+  );
+
   return (
     <section
       className={classNames("shopping-card", {
@@ -37,21 +72,37 @@ const ShoppingCard = ({
       </div>
       <nav className="shopping-card__nav">
         <ul className="shopping-card__nav-list">
-          <li className="shopping-card__nav-list-item">Item in cart</li>
-          <li className="shopping-card__nav-list-item">Delivery info</li>
-          <li className="shopping-card__nav-list-item">Payments</li>
+          {routes.map((item, index) => (
+            <li
+              className={cn("shopping-card__nav-list-item", {
+                "shopping-card__nav-list-item_active": index === activeRoute,
+              })}
+            >
+              {item.link}
+            </li>
+          ))}
         </ul>
       </nav>
-      <ItemList shoppingItems={shoppingItems} />
-      {+totalPrice > 0 && (
-        <div className="shopping-card__price">
-          <h4>Total</h4>
-          <h4>{+totalPrice > 0 && totalPrice + "$"}</h4>
-        </div>
+      {routes[activeRoute].component}
+      {+totalPrice > 0 ? (
+        <>
+          <div className="shopping-card__price">
+            <h4>Total</h4>
+            <h4>{+totalPrice > 0 && totalPrice + "$"}</h4>
+          </div>
+        </>
+      ) : (
+        <Button
+          appearence="dark"
+          className="shopping-card__btn_next"
+          onClick={() => {
+            setOpen(!open);
+            navigate("");
+          }}
+        >
+          Go to shop
+        </Button>
       )}
-      <Button appearence="dark" className="shopping-card__btn_next">
-        FURTHER
-      </Button>
     </section>
   );
 };

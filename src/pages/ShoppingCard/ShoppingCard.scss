@@ -26,13 +26,18 @@
     text-transform: capitalize;
     &-item {
       margin-right: 5px;
-      cursor: pointer;
-
+      opacity: 0.4;
+      cursor: not-allowed;
       &:nth-child(n + 2) {
         &::before {
           margin-right: 5px;
           content: "/";
         }
+      }
+
+      &_active {
+        opacity: 1;
+        cursor: pointer;
       }
     }
   }

@@ -1,0 +1,18 @@
+.delivery-form {
+  &__container {
+  }
+  &__title {
+    font-size: 17px;
+    text-align: center;
+  }
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+  &__field {
+    &__input {
+      margin: 7px 0;
+    }
+    &__checkbox {
+      margin: 20px 0;
+    }
+  }
+}

@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import "./HeaderKit.scss";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../../store/store";
-import { selectAllShoppingCardId } from "../../../../store/shopping-card/shopping-card-slice";
+import { selectAllProductsCount } from "../../../../store/shopping-card/shopping-card-slice";
 import { useState } from "react";
 import SearchPanel from "../../../Business-components/SearchPanel/SearchPanel";
 import cn from "classnames";
@@ -17,9 +17,7 @@ export const HeaderKit = ({ className, ...props }: IHeaderKitProps) => {
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const countItems = useAppSelector(
-    (state) => selectAllShoppingCardId(state).length
-  );
+  const countItems = useAppSelector((state) => selectAllProductsCount(state));
 
   const items = [
     {
