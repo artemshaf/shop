@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Root } from "react-dom/client";
 import {
   IClothesItem,
   IParticulars,
@@ -126,7 +125,7 @@ export const selectClothesByIds = (state: RootState, ids: string[]) => {
 export const selectIsLoading = (state: RootState) => state.clothes.isLoading;
 export const selectError = (state: RootState) => state.clothes.error;
 
-const getDataByGender = (state: RootState, gender: keyof IProducts) => {
+export const getDataByGender = (state: RootState, gender: keyof IProducts) => {
   return state.clothes.clothes[gender];
 };
 
@@ -194,8 +193,6 @@ export const selectClothesByGenderAndFilters = (
     });
   }
   if (filters.sizes.length > 0) {
-    console.log("filters.sizes");
-
     result = result.filter(
       (item) =>
         item.sizes.filter((s) =>

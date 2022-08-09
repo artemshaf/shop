@@ -28,7 +28,8 @@ const ReviewModal = ({
     formState: { errors },
   } = useForm<Fields>();
 
-  const onSubmit: SubmitHandler<Fields> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Fields> = (data) => {};
+
   return (
     <Modal
       className={cn("review-modal", className)}
@@ -43,7 +44,7 @@ const ReviewModal = ({
         <h3 className="review-modal__title">Введите ваше имя</h3>
         <Input
           className="review-modal__field"
-          {...register("name", { required: true })}
+          {...register("name", { required: true, minLength: 3 })}
         />
         <h3 className="review-modal__title">Укажите рейтинг</h3>
         <Controller
@@ -58,7 +59,7 @@ const ReviewModal = ({
           render={({ field }) => (
             <Rating
               className={cn("review-modal__rating")}
-              rate={1}
+              rate={field.value}
               ref={field.ref}
               setRate={field.onChange}
               isEditable
@@ -70,7 +71,7 @@ const ReviewModal = ({
         <Textarea
           className="review-modal__field"
           placeholder="Your description"
-          {...register("description", { required: true })}
+          {...register("description", { required: true, minLength: 5 })}
         />
         <Button appearence="dark">Отправить</Button>
       </form>

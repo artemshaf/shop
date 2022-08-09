@@ -4,7 +4,7 @@ import "./Radiobutton.scss";
 
 export const Radiobutton = forwardRef(
   (
-    { children, checked, onClick, id, name, value }: RadiobuttonProps,
+    { children, checked, onClick, id, name, value, onChange }: RadiobuttonProps,
     ref: ForwardedRef<HTMLInputElement>
   ): JSX.Element => {
     return (
@@ -15,6 +15,7 @@ export const Radiobutton = forwardRef(
           value={value}
           name={name}
           id={id}
+          onChange={onChange}
           checked={checked}
           onClick={onClick}
           ref={ref}

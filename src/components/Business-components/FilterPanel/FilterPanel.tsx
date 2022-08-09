@@ -1,9 +1,15 @@
 import cn from "classnames";
+import { useMemo } from "react";
+import {
+  getDataByGender,
+  IProducts,
+} from "../../../store/clothes/clothes-slice";
 import {
   selectFilterByGender,
   setFilters,
 } from "../../../store/clothes/filters/filters-slice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
+import { IClothesItem } from "../../Container-components/Clothes/Clothes.props";
 import { Checkbox } from "../../UI-components/Checkbox/Checkbox";
 import { IFilterPanelProps } from "./FilterPanel.props";
 import "./FilterPanel.scss";
@@ -13,10 +19,31 @@ export const FilterPanel = ({
   className,
   ...props
 }: IFilterPanelProps) => {
+  const items: IClothesItem[] = useAppSelector((state) =>
+    getDataByGender(state, gender as keyof IProducts)
+  );
+
+  const brandList = useMemo(
+    () => [...new Set(items.map(({ brand }) => brand))],
+    [gender, items]
+  );
+  const colorList = useMemo(
+    () => [
+      ...new Set(
+        items.map(({ images }) => images.map(({ color }) => color)).flat()
+      ),
+    ],
+    [gender, items]
+  );
+  const sizesList = useMemo(
+    () => [...new Set(items.map(({ sizes }) => sizes).flat())],
+    [gender, items]
+  );
+
   const filters = {
-    color: ["black", "Cyan", "Green", "Grey", "White", "Blue"],
-    sizes: ["XXL INT", "3XL INT", "XL", "s INT", "M", "S", "XS", "M INT"],
-    brand: ["Brave Soul", "H&M", "Jack & Jones", "Levi's", "Monki", "Nike"],
+    color: colorList,
+    sizes: sizesList,
+    brand: brandList,
     price: ["1200", "600", "400", "300", "200", "100", "20", "7"],
   };
 

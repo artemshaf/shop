@@ -53,3 +53,7 @@
   opacity: 0;
   transition: var(--transition-lg);
 }
+
+.checkbox_error {
+  border: 2px solid red;
+}

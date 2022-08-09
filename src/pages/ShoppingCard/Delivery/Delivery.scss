@@ -1,11 +1,13 @@
 .delivery-form {
+  display: flex;
+  flex-direction: column;
   &__container {
   }
   &__title {
     font-size: 17px;
     text-align: center;
   }
-  height: calc(100vh - 200px);
+  height: calc(100vh - 255px);
   overflow-y: auto;
   &__field {
     &__input {

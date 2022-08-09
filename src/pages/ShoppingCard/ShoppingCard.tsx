@@ -11,9 +11,16 @@ import ItemList from "./ItemList/ItemList";
 import { IShoppingCardProps } from "./ShoppingCard.props";
 import Close from "../../imgs/icons/close.svg";
 import "./ShoppingCard.scss";
-import { useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import Delivery from "./Delivery/Delivery";
 import { useNavigate } from "react-router-dom";
+import Payments from "./Payments/Payments";
+
+interface IButtonBehavior {
+  onClick: () => void;
+  text: string;
+  appearence: string;
+}
 
 const ShoppingCard = ({
   open,
@@ -26,34 +33,110 @@ const ShoppingCard = ({
   const [activeRoute, setActiveRoute] = useState<number>(0);
   const navigate = useNavigate();
 
+  const buttonBehavior: IButtonBehavior[] | undefined = useMemo(() => {
+    switch (activeRoute) {
+      case 0:
+        return [
+          {
+            onClick: () => setActiveRoute(1),
+            text: "Further",
+            appearence: "dark",
+          },
+          {
+            onClick: () => {
+              setOpen(false);
+              navigate("");
+            },
+            text: "Go to shop",
+            appearence: "light",
+          },
+        ];
+      case 1:
+        return [
+          {
+            onClick: () => setActiveRoute(2),
+            text: "Go to payment",
+            appearence: "dark",
+          },
+          {
+            onClick: () => setActiveRoute(0),
+            text: "View cart",
+            appearence: "light",
+          },
+        ];
+      case 2:
+        return [
+          {
+            onClick: () => setActiveRoute(0),
+            text: "Payment",
+            appearence: "dark",
+          },
+          {
+            onClick: () => setActiveRoute(1),
+            text: "View payments info",
+            appearence: "light",
+          },
+        ];
+      default:
+        break;
+    }
+  }, [activeRoute]);
+
   const routes = useMemo(
     () => [
       {
         component: (
           <ItemList
+            className="shopping-card__actions-block"
             shoppingItems={shoppingItems}
             setActiveRoute={setActiveRoute}
             index={0}
-          />
+          >
+            <div className="shopping-card__price">
+              <h4>Total</h4>
+              <h4>{+totalPrice > 0 && totalPrice + "$"}</h4>
+            </div>
+          </ItemList>
         ),
         link: "Item in cart",
       },
       {
-        component: <Delivery setActiveRoute={setActiveRoute} index={1} />,
+        component: (
+          <Delivery
+            className="shopping-card__actions-block"
+            totalPrice={Number(totalPrice)}
+            setActiveRoute={setActiveRoute}
+            index={1}
+          >
+            <div className="shopping-card__price">
+              <h4>Total</h4>
+              <h4>{+totalPrice > 0 && totalPrice + "$"}</h4>
+            </div>
+          </Delivery>
+        ),
         link: "Delivery info",
       },
       {
         component: (
-          <ItemList
-            shoppingItems={shoppingItems}
+          <Payments
+            className="shopping-card__actions-block"
             setActiveRoute={setActiveRoute}
-            index={-1}
-          />
+          >
+            <div className="shopping-card__price">
+              <h4>Total</h4>
+              <h4>{+totalPrice > 0 && totalPrice + "$"}</h4>
+            </div>
+          </Payments>
         ),
         link: "Payments",
       },
+      {
+        component: (
+          <h1 className="shopping-card__centered">Thanks form Payment!!!</h1>
+        ),
+      },
     ],
-    []
+    [activeRoute]
   );
 
   return (
@@ -72,36 +155,26 @@ const ShoppingCard = ({
       </div>
       <nav className="shopping-card__nav">
         <ul className="shopping-card__nav-list">
-          {routes.map((item, index) => (
-            <li
-              className={cn("shopping-card__nav-list-item", {
-                "shopping-card__nav-list-item_active": index === activeRoute,
-              })}
-            >
-              {item.link}
-            </li>
-          ))}
+          {routes.map(
+            (item, index) =>
+              item.link && (
+                <li
+                  key={item.link}
+                  className={cn("shopping-card__nav-list-item", {
+                    "shopping-card__nav-list-item_active":
+                      index === activeRoute,
+                  })}
+                >
+                  {item.link}
+                </li>
+              )
+          )}
         </ul>
       </nav>
-      {routes[activeRoute].component}
       {+totalPrice > 0 ? (
-        <>
-          <div className="shopping-card__price">
-            <h4>Total</h4>
-            <h4>{+totalPrice > 0 && totalPrice + "$"}</h4>
-          </div>
-        </>
+        <>{routes[activeRoute].component}</>
       ) : (
-        <Button
-          appearence="dark"
-          className="shopping-card__btn_next"
-          onClick={() => {
-            setOpen(!open);
-            navigate("");
-          }}
-        >
-          Go to shop
-        </Button>
+        <h1 className="shopping-card__centered">Shopping cart is empty!</h1>
       )}
     </section>
   );

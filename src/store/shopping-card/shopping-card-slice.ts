@@ -1,12 +1,20 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Interface } from "readline";
 import { RootState } from "../store";
 
 const name = "shopping-card";
 
+interface IObjectInfo {
+  [key: string]: unknown;
+}
 export interface IShoppingCard {
-  isLoading: string;
+  isLoading: boolean;
   error: null | string;
   clothes: IShoppingCardItem[];
+  countries: string[];
+  cities: string[];
+  deliveryInfo: IObjectInfo;
+  paymentsInfo: IObjectInfo;
 }
 
 export interface ISizeShoppingCardItem {
@@ -24,9 +32,13 @@ export interface IShoppingCardItem {
 }
 
 export const initialState: IShoppingCard = {
-  isLoading: "idle",
+  isLoading: false,
   error: null,
   clothes: [],
+  countries: [],
+  cities: [],
+  deliveryInfo: {},
+  paymentsInfo: {},
 };
 
 export const addToShoppingCard = createAsyncThunk(
@@ -105,7 +117,6 @@ export const shoppingCardSlice = createSlice({
                   : currentItem
               )
           );
-          return;
         }
       )
       .addCase(
@@ -122,32 +133,40 @@ export const shoppingCardSlice = createSlice({
                     : currentItem)
               )
           );
-          return;
         }
       )
       .addCase(
         removeFromShoppingCard.fulfilled,
         (state, action: PayloadAction<IClothesRemove>) => {
-          return {
-            error: state.error,
-            isLoading: state.isLoading,
-            clothes: state.clothes.filter(
-              (item) =>
-                item.id !== action.payload.id &&
-                item.sizes.filter(
-                  (item) =>
-                    item.size === action.payload.size &&
-                    item.color === action.payload.color
-                )
-            ),
-          };
+          // return {
+          //   error: state.error,
+          //   isLoading: state.isLoading,
+          //   clothes: state.clothes.filter(
+          //     (item) =>
+          //       item.id !== action.payload.id &&
+          //       item.sizes.filter(
+          //         (item) =>
+          //           item.size === action.payload.size &&
+          //           item.color === action.payload.color
+          //       )
+          //   ),
+          // };
+          // state.clothes.filter(
+          // //     (item) =>
+          // //       item.id !== action.payload.id &&
+          // //       item.sizes.filter(
+          // //         (item) =>
+          // //           item.size === action.payload.size &&
+          // //           item.color === action.payload.color
+          // //       )
+          // //   ),
         }
       )
       .addCase(addToShoppingCard.pending, (state) => {
-        state.isLoading = "loading";
+        state.isLoading = true;
       })
       .addCase(addToShoppingCard.rejected, (state) => {
-        state.isLoading = "idle";
+        state.isLoading = false;
         state.error = "Something went wrong!";
       })
       .addCase(

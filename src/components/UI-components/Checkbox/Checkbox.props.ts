@@ -4,4 +4,6 @@ export interface ICheckboxProps
   extends DetailedHTMLProps<
     InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
-  > {}
+  > {
+  error?: boolean;
+}

@@ -25,8 +25,6 @@ export const Input = forwardRef(
         <input
           ref={ref}
           className={cn("input body_text", className)}
-          value={value}
-          onChange={(e) => onHandle!(e.target.value)}
           type={type}
           placeholder={placeholder}
           {...props}

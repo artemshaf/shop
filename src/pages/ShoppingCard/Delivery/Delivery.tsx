@@ -1,20 +1,27 @@
-import { DetailedHTMLProps, HTMLAttributes, useMemo, useState } from "react";
+import {
+  DetailedHTMLProps,
+  HTMLAttributes,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Checkbox } from "../../../components/UI-components/Checkbox/Checkbox";
 import { Input } from "../../../components/UI-components/Input/Input";
 import { Radiobutton } from "../../../components/UI-components/Radiobutton/Radiobutton";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { postOfficesSchema } from "./VariantsDelivery/schemas/PostOffices";
-import "./Delivery.scss";
 import { storeSchema } from "./VariantsDelivery/schemas/Store";
 import { expressSchema } from "./VariantsDelivery/schemas/Express";
 import ReactInputMask from "react-input-mask";
+import "./Delivery.scss";
+import classNames from "classnames";
 import { Button } from "../../../components/UI-components/Button/Button";
-
 interface IDeliveryProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLFormElement>, HTMLFormElement> {
   setActiveRoute: (index: number) => void;
   index: number;
+  totalPrice: number;
 }
 
 export interface Fields {
@@ -38,6 +45,8 @@ const varianstDelivery = [
 ];
 
 const Delivery = ({
+  children,
+  totalPrice,
   setActiveRoute,
   index,
   className,
@@ -46,165 +55,253 @@ const Delivery = ({
   const [activeDelivery, setActiveDelivery] = useState<string>(
     varianstDelivery[0]
   );
-  const resolver = useMemo(
-    () =>
-      activeDelivery === varianstDelivery[0]
-        ? postOfficesSchema
-        : activeDelivery === varianstDelivery[1]
-        ? expressSchema
-        : storeSchema,
-    [activeDelivery]
+
+  const resolver = joiResolver(
+    activeDelivery === varianstDelivery[0]
+      ? postOfficesSchema
+      : activeDelivery === varianstDelivery[1]
+      ? expressSchema
+      : storeSchema
   );
 
   const {
     register,
     handleSubmit,
+    unregister,
+    clearErrors,
     control,
-    watch,
     formState: { errors },
-  } = useForm<Fields>({
-    resolver: joiResolver(resolver),
-  });
+  } = useForm<Fields>({ resolver });
 
-  const variantsComponents = [
-    <>
-      <Input
-        className="delivery-form__field__input"
-        placeholder="City"
-        {...register("city")}
-      />
-      <Input
-        className="delivery-form__field__input"
-        placeholder="Street"
-        {...register("street")}
-      />
-      <Input
-        className="delivery-form__field__input"
-        placeholder="House"
-        {...register("house")}
-      />
-      <Input
-        className="delivery-form__field__input"
-        placeholder="Apartment"
-        {...register("apartment")}
-      />
-      <Controller
-        control={control}
-        name="postcode"
-        render={({ field: { onChange, onBlur, ref } }) => (
-          <ReactInputMask
-            mask="BY 999999"
-            className="delivery-form__field__input input"
-            placeholder="BY ______"
-            onBlur={onBlur}
-            onChange={onChange}
-            inputRef={ref}
-          />
-        )}
-      />
-    </>,
-    <>
-      <Input
-        className="delivery-form__field__input"
-        placeholder="City"
-        {...register("city")}
-      />
-      <Input
-        className="delivery-form__field__input"
-        placeholder="Street"
-        {...register("street")}
-      />
-      <Input
-        className="delivery-form__field__input"
-        placeholder="House"
-        {...register("house")}
-      />
-      <Input
-        className="delivery-form__field__input"
-        placeholder="Apartment"
-        {...register("apartment")}
-      />
-    </>,
-    <Input
-      className="delivery-form__field__input"
-      placeholder="City"
-      {...register("storeAdress")}
-    />,
-  ];
+  const unregistredFormFields = () => {
+    clearErrors();
+    switch (activeDelivery) {
+      case varianstDelivery[0]:
+        unregister("storeAdress");
+        break;
+      case varianstDelivery[1]:
+        unregister("storeAdress");
+        unregister("postcode");
+        break;
+      case varianstDelivery[2]:
+        unregister("postcode");
+        unregister("apartment");
+        unregister("house");
+        unregister("street");
+        unregister("country");
+        break;
+      default:
+        break;
+    }
+  };
 
   const onSubmit: SubmitHandler<any> = (data) => {
-    console.log(data);
-    console.log(errors);
+    setActiveRoute(2);
   };
 
   return (
-    <section className="delivery-form__container">
-      <form className="delivery-form" onSubmit={handleSubmit(onSubmit)}>
-        <h3 className="delivery-form__title">
-          Choose the method of delivery of the items
-        </h3>
-        {varianstDelivery.length > 0 && (
-          <ul>
-            {varianstDelivery.map((item) => (
-              <li key={item}>
-                <Radiobutton
-                  onClick={() => setActiveDelivery(item)}
-                  name={"varianstDelivery"}
-                  value={item}
-                  id={item}
-                  checked={activeDelivery === item}
-                >
-                  {item}
-                </Radiobutton>
-              </li>
-            ))}
-          </ul>
-        )}
-        <h5>PHONE</h5>
-        <Controller
-          control={control}
-          name="phone"
-          render={({ field: { onChange, onBlur, ref } }) => (
-            <ReactInputMask
-              mask="+375  (99) 9999999"
-              className="delivery-form__field__input input"
-              placeholder="+375  (__) _______"
-              onBlur={onBlur}
-              onChange={onChange}
-              inputRef={ref}
-            />
+    <section className={classNames("delivery-form__container", className)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="delivery-form">
+          <h3 className="delivery-form__title">
+            Choose the method of delivery of the items
+          </h3>
+          {varianstDelivery.length > 0 && (
+            <ul>
+              {varianstDelivery.map((item) => (
+                <li key={item}>
+                  <Radiobutton
+                    onChange={() => setActiveDelivery(item)}
+                    name={"varianstDelivery"}
+                    value={item}
+                    id={item}
+                    checked={activeDelivery === item}
+                  >
+                    {item}
+                  </Radiobutton>
+                </li>
+              ))}
+            </ul>
           )}
-        />
-        <Input
-          className="delivery-form__field__input"
-          placeholder="E-mail"
-          {...register("email")}
-        >
-          E-mail
-        </Input>
-        <Input
-          className="delivery-form__field__input"
-          placeholder="Country"
-          {...register("country")}
-        >
-          Adress
-        </Input>
-        {activeDelivery === varianstDelivery[0] && variantsComponents[0]}
-        {activeDelivery === varianstDelivery[1] && variantsComponents[1]}
-        {activeDelivery === varianstDelivery[2] && variantsComponents[2]}
-        <Checkbox
-          className="delivery-form__field__checkbox"
-          {...register("agree")}
-        >
-          I agree to the processing of my personal information
-        </Checkbox>
+          {activeDelivery && (
+            <>
+              <h5>PHONE</h5>
+              <Controller
+                control={control}
+                name="phone"
+                render={({ field: { onChange, onBlur, ref } }) => (
+                  <ReactInputMask
+                    mask="+375 (99) 9999999"
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.phone,
+                    })}
+                    placeholder="+375  (__) _______"
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    inputRef={ref}
+                  />
+                )}
+              />
+              <Input
+                className={classNames("delivery-form__field__input input", {
+                  input_error: errors.email,
+                })}
+                placeholder="E-mail"
+                {...register("email")}
+              >
+                E-mail
+              </Input>
+              {activeDelivery === varianstDelivery[0] && (
+                <>
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.country,
+                    })}
+                    placeholder="Country"
+                    {...register("country")}
+                  >
+                    Adress
+                  </Input>
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.city,
+                    })}
+                    placeholder="City"
+                    {...register("city")}
+                  />
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.street,
+                    })}
+                    placeholder="Street"
+                    {...register("street")}
+                  />
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.house,
+                    })}
+                    placeholder="House"
+                    {...register("house")}
+                  />
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.apartment,
+                    })}
+                    placeholder="Apartment"
+                    {...register("apartment")}
+                  />
+                  <Controller
+                    control={control}
+                    name="postcode"
+                    render={({ field: { onChange, onBlur, ref } }) => (
+                      <ReactInputMask
+                        mask="BY 999999"
+                        className={classNames(
+                          "delivery-form__field__input input",
+                          {
+                            input_error: errors.postcode,
+                          }
+                        )}
+                        placeholder="BY ______"
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        inputRef={ref}
+                      />
+                    )}
+                  />
+                </>
+              )}
+              {activeDelivery === varianstDelivery[1] && (
+                <>
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.country,
+                    })}
+                    placeholder="Country"
+                    {...register("country")}
+                  >
+                    Adress
+                  </Input>
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.city,
+                    })}
+                    placeholder="City"
+                    {...register("city")}
+                  />
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.street,
+                    })}
+                    placeholder="Street"
+                    {...register("street")}
+                  />
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.house,
+                    })}
+                    placeholder="House"
+                    {...register("house")}
+                  />
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.apartment,
+                    })}
+                    placeholder="Apartment"
+                    {...register("apartment")}
+                  />
+                </>
+              )}
+              {activeDelivery === varianstDelivery[2] && (
+                <>
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.storeAdress,
+                    })}
+                    placeholder="Adress of store(Country)"
+                    {...register("storeAdress")}
+                  >
+                    Adress of store
+                  </Input>
+                  <Input
+                    className={classNames("delivery-form__field__input input", {
+                      input_error: errors.city,
+                    })}
+                    placeholder="City"
+                    {...register("city")}
+                  />
+                </>
+              )}
+              <Checkbox
+                className={classNames("delivery-form__field__checkbox", {
+                  checbox_error: errors.agree,
+                })}
+                error={errors.agree ? true : false}
+                {...register("agree")}
+              >
+                I agree to the processing of my personal information
+              </Checkbox>
+            </>
+          )}
+        </div>
+        {children}
         <Button
-          type="submit"
-          appearence="dark"
           className="shopping-card__btn_next"
-          // onClick={() => setActiveRoute(index + 1)}
+          appearence="dark"
+          onClick={() => {
+            console.log(errors);
+            unregistredFormFields();
+          }}
+          type={"submit"}
         >
-          FURTHER
+          Futher
+        </Button>
+        <Button
+          className="shopping-card__btn_next"
+          appearence="light"
+          type={"submit"}
+        >
+          Go to shop
         </Button>
       </form>
     </section>

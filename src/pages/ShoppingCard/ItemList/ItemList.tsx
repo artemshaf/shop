@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 import { Button } from "../../../components/UI-components/Button/Button";
 import { GET_IMAGE_URL } from "../../../helpers/generateUrl";
@@ -22,6 +23,7 @@ interface ICardItemListProps
 }
 
 const ItemList = ({
+  children,
   setActiveRoute,
   index,
   shoppingItems,
@@ -40,13 +42,16 @@ const ItemList = ({
 
   return (
     <>
-      <ul {...props} className="shopping-card__items-list">
+      <ul {...props} className={cn("shopping-card__items-list", className)}>
         {shoppingItems.map((startItem) => {
           const name = startItem.name;
           const price = startItem.price;
 
           return startItem.sizes.map((item) => (
-            <li className="shopping-card__items-list-item">
+            <li
+              className="shopping-card__items-list-item"
+              key={startItem.id + item.size + item.color}
+            >
               <img
                 src={GET_IMAGE_URL(item.img)}
                 className="shopping-card__items-list-item__img"
@@ -114,13 +119,21 @@ const ItemList = ({
           ));
         })}
       </ul>
+      {children}
       <Button
-        type="submit"
-        appearence="dark"
         className="shopping-card__btn_next"
-        onClick={() => setActiveRoute(index + 1)}
+        type={"submit"}
+        appearence="dark"
+        onClick={() => setActiveRoute(1)}
       >
-        FURTHER
+        Futher
+      </Button>
+      <Button
+        type={"submit"}
+        appearence="light"
+        className="shopping-card__btn_next"
+      >
+        Go to shop
       </Button>
     </>
   );
