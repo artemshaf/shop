@@ -1,14 +1,11 @@
 import { IClothesParticularsProps } from "./Clothes-particulars.props";
 import "./Clothes-particulars.scss";
 import { v4 } from "uuid";
-import { useAppDispatch, useAppSelector } from "../../../store/store";
-import {
-  selectParticularByGender,
-  setParticular,
-} from "../../../store/clothes/filters/filters-slice";
 import cn from "classnames";
 
 export const ClothesParticulars = ({
+  particular,
+  setParticular,
   gender,
   className,
   ...props
@@ -36,34 +33,19 @@ export const ClothesParticulars = ({
     },
   ];
 
-  const dispatch = useAppDispatch();
-
-  const currParticular = useAppSelector((state) =>
-    selectParticularByGender(state, gender)
-  );
-
   return (
     <ul className={cn("clothes-filter__list", className)} {...props}>
-      {items.map((item) => {
-        const obj = {
-          particular: item.key,
-          gender,
-        };
-
-        return (
-          <li
-            key={v4()}
-            className={cn("clothes-filter__list-item", {
-              "clothes-filter__list-item_active":
-                item.key.toLocaleLowerCase() ==
-                currParticular?.toString().toLocaleLowerCase(),
-            })}
-            onClick={() => dispatch(setParticular(obj))}
-          >
-            {item.text}
-          </li>
-        );
-      })}
+      {items.map((item) => (
+        <li
+          key={v4()}
+          className={cn("clothes-filter__list-item", {
+            "clothes-filter__list-item_active": item.key === particular,
+          })}
+          onClick={() => setParticular(item.key)}
+        >
+          {item.text}
+        </li>
+      ))}
     </ul>
   );
 };

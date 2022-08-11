@@ -1,13 +1,14 @@
 import cn from "classnames";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/UI-components/Button/Button";
 import { GET_IMAGE_URL } from "../../../helpers/generateUrl";
 import TrashIcon from "../../../imgs/icons/trash.svg";
 import {
-  decCountToShoppingCard,
-  incCountToShoppingCard,
+  changeClothesCountOnCart,
   IShoppingCardItem,
-  removeFromShoppingCard,
+  removeClotheFromCart,
+  toggleOpen,
 } from "../../../store/shopping-card/shopping-card-slice";
 import { useAppDispatch } from "../../../store/store";
 import "./ItemList.scss";
@@ -37,20 +38,20 @@ const ItemList = ({
       </h1>
     );
   }
-
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   return (
     <>
       <ul {...props} className={cn("shopping-card__items-list", className)}>
-        {shoppingItems.map((startItem) => {
-          const name = startItem.name;
-          const price = startItem.price;
+        {shoppingItems.map((item) => {
+          const name = item.name;
+          const price = item.price;
 
-          return startItem.sizes.map((item) => (
+          return (
             <li
               className="shopping-card__items-list-item"
-              key={startItem.id + item.size + item.color}
+              key={item.id + item.size + item.color}
             >
               <img
                 src={GET_IMAGE_URL(item.img)}
@@ -67,11 +68,9 @@ const ItemList = ({
                       className="shopping-card__items-list-item__info__actions__count_dec"
                       onClick={() =>
                         dispatch(
-                          decCountToShoppingCard({
+                          changeClothesCountOnCart({
                             count: -1,
-                            color: item.color,
-                            id: startItem.id,
-                            size: item.size,
+                            id: item.id,
                           })
                         )
                       }
@@ -85,11 +84,9 @@ const ItemList = ({
                       className="shopping-card__items-list-item__info__actions__count_inc"
                       onClick={() =>
                         dispatch(
-                          incCountToShoppingCard({
+                          changeClothesCountOnCart({
                             count: +1,
-                            color: item.color,
-                            id: startItem.id,
-                            size: item.size,
+                            id: item.id,
                           })
                         )
                       }
@@ -105,9 +102,9 @@ const ItemList = ({
                     src={TrashIcon}
                     onClick={() =>
                       dispatch(
-                        removeFromShoppingCard({
+                        removeClotheFromCart({
+                          id: item.id,
                           color: item.color,
-                          id: startItem.id,
                           size: item.size,
                         })
                       )
@@ -116,7 +113,7 @@ const ItemList = ({
                 </div>
               </div>
             </li>
-          ));
+          );
         })}
       </ul>
       {children}
@@ -132,6 +129,10 @@ const ItemList = ({
         type={"submit"}
         appearence="light"
         className="shopping-card__btn_next"
+        onClick={() => {
+          dispatch(toggleOpen());
+          navigate("/");
+        }}
       >
         Go to shop
       </Button>

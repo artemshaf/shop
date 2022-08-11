@@ -28,7 +28,10 @@ const ReviewModal = ({
     formState: { errors },
   } = useForm<Fields>();
 
-  const onSubmit: SubmitHandler<Fields> = (data) => {};
+  const onSubmit: SubmitHandler<Fields> = (data) => {
+    //
+    console.log(data);
+  };
 
   return (
     <Modal

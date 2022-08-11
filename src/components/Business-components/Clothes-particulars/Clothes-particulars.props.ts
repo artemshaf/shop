@@ -6,4 +6,6 @@ export interface IClothesParticularsProps
     HTMLUListElement
   > {
   gender: string | number;
+  particular: string;
+  setParticular: (str: string) => void;
 }

@@ -1,11 +1,6 @@
 import classNames from "classnames";
 import cn from "classnames";
 import { Button } from "../../components/UI-components/Button/Button";
-import {
-  selectAllProductId,
-  selectAllProductPrice,
-  selectAllProducts,
-} from "../../store/shopping-card/shopping-card-slice";
 import { useAppSelector } from "../../store/store";
 import ItemList from "./ItemList/ItemList";
 import { IShoppingCardProps } from "./ShoppingCard.props";
@@ -15,6 +10,12 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import Delivery from "./Delivery/Delivery";
 import { useNavigate } from "react-router-dom";
 import Payments from "./Payments/Payments";
+import { IClothesItem } from "../../components/Container-components/Clothes/Clothes.props";
+import {
+  IShoppingCardItem,
+  selectShoppingCardClothes,
+  selectShoppingCardItemsPrice,
+} from "../../store/shopping-card/shopping-card-slice";
 
 interface IButtonBehavior {
   onClick: () => void;
@@ -28,8 +29,12 @@ const ShoppingCard = ({
   className,
   ...props
 }: IShoppingCardProps) => {
-  const shoppingItems = useAppSelector((state) => selectAllProducts(state));
-  const totalPrice = useAppSelector((state) => selectAllProductPrice(state));
+  const shoppingItems: IShoppingCardItem[] = useAppSelector((state) =>
+    selectShoppingCardClothes(state)
+  );
+  const totalPrice = Number(
+    useAppSelector((state) => selectShoppingCardItemsPrice(state)).toFixed(2)
+  );
   const [activeRoute, setActiveRoute] = useState<number>(0);
   const navigate = useNavigate();
 
@@ -104,7 +109,7 @@ const ShoppingCard = ({
         component: (
           <Delivery
             className="shopping-card__actions-block"
-            totalPrice={Number(totalPrice)}
+            totalPrice={totalPrice}
             setActiveRoute={setActiveRoute}
             index={1}
           >
@@ -136,7 +141,7 @@ const ShoppingCard = ({
         ),
       },
     ],
-    [activeRoute]
+    [activeRoute, shoppingItems]
   );
 
   return (

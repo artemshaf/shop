@@ -6,6 +6,7 @@ import { ReactComponent as ShareIcon } from "../../../imgs/main/share.svg";
 import "./TopDetailInfo.scss";
 export const TopDetailInfo = ({
   breadcrumbsLast,
+  clothName,
   sex,
   className,
   ...props
@@ -28,7 +29,9 @@ export const TopDetailInfo = ({
             </span>
           </div>
         </section>
-        <h1 className={cn("top-detail__title", "title__text-ex-lg")}>{sex}</h1>
+        <h1 className={cn("top-detail__title", "title__text-ex-lg")}>
+          {clothName ? clothName : sex ? sex : ""}
+        </h1>
         {clotheInfo && (
           <>
             <section className={cn("top-detail__bottom-block")}>

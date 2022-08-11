@@ -17,6 +17,8 @@ import ReactInputMask from "react-input-mask";
 import "./Delivery.scss";
 import classNames from "classnames";
 import { Button } from "../../../components/UI-components/Button/Button";
+import { useAppDispatch } from "../../../store/store";
+import { addDeliveryInfo } from "../../../store/shopping-card/shopping-card-slice";
 interface IDeliveryProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLFormElement>, HTMLFormElement> {
   setActiveRoute: (index: number) => void;
@@ -95,7 +97,14 @@ const Delivery = ({
     }
   };
 
+  useEffect(() => {
+    unregistredFormFields();
+  }, [activeDelivery]);
+
+  const dispatch = useAppDispatch();
+
   const onSubmit: SubmitHandler<any> = (data) => {
+    dispatch(addDeliveryInfo({ activeDelivery, ...data }));
     setActiveRoute(2);
   };
 
@@ -290,7 +299,6 @@ const Delivery = ({
           appearence="dark"
           onClick={() => {
             console.log(errors);
-            unregistredFormFields();
           }}
           type={"submit"}
         >
@@ -300,8 +308,11 @@ const Delivery = ({
           className="shopping-card__btn_next"
           appearence="light"
           type={"submit"}
+          onClick={() => {
+            setActiveRoute(0);
+          }}
         >
-          Go to shop
+          Go to item cart
         </Button>
       </form>
     </section>

@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Interface } from "readline";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 const name = "shopping-card";
@@ -8,8 +7,7 @@ interface IObjectInfo {
   [key: string]: unknown;
 }
 export interface IShoppingCard {
-  isLoading: boolean;
-  error: null | string;
+  isOpen: boolean;
   clothes: IShoppingCardItem[];
   countries: string[];
   cities: string[];
@@ -17,23 +15,23 @@ export interface IShoppingCard {
   paymentsInfo: IObjectInfo;
 }
 
-export interface ISizeShoppingCardItem {
-  size: string;
-  count: number;
-  img: string;
-  color: string;
-}
-
 export interface IShoppingCardItem {
-  name: string;
   id: string;
+  img: string;
+  name: string;
+  size: string;
+  color: string;
+  count: number;
   price: number;
-  sizes: ISizeShoppingCardItem[];
+}
+export interface IShoppingCardItemEqual {
+  id: string;
+  color: string;
+  size: string;
 }
 
 export const initialState: IShoppingCard = {
-  isLoading: false,
-  error: null,
+  isOpen: false,
   clothes: [],
   countries: [],
   cities: [],
@@ -41,59 +39,11 @@ export const initialState: IShoppingCard = {
   paymentsInfo: {},
 };
 
-export const addToShoppingCard = createAsyncThunk(
-  name + "/ADD",
-  async (props: IClothesAdd, { extra: api }) => {
-    return props;
-  }
-);
-
-export const incCountToShoppingCard = createAsyncThunk(
-  name + "/INC_CHANGE_COUNT",
-  async (props: IClothesChangeCount, { extra: api }) => {
-    return props;
-  }
-);
-
-export const decCountToShoppingCard = createAsyncThunk(
-  name + "/DEC_CHANGE_COUNT",
-  async (props: IClothesChangeCount, { extra: api }) => {
-    return props;
-  }
-);
-
-export const removeFromShoppingCard = createAsyncThunk(
-  name + "/REMOVE_ITEM",
-  async (props: IClothesRemove, { extra: api }) => {
-    return props;
-  }
-);
-
-export const selectAllShoppingCard = (state: RootState) => {
-  return state.shoppingCard.clothes;
-};
-export const selectAllShoppingCardId = (state: RootState) => {
-  return state.shoppingCard.clothes.map((item) => item.id);
-};
-
-export interface IClothesAdd {
-  name: string;
-  id: string;
-  size: string;
-  count: number;
-  price: number;
-  color: string;
-  img: string;
-}
-
 export interface IClothesChangeCount {
   id: string;
-  color: string;
-  size: string;
   count: number;
 }
-
-export interface IClothesRemove {
+export interface IClotheRemove {
   id: string;
   color: string;
   size: string;
@@ -102,154 +52,81 @@ export interface IClothesRemove {
 export const shoppingCardSlice = createSlice({
   name,
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(
-        incCountToShoppingCard.fulfilled,
-        (state, action: PayloadAction<IClothesChangeCount>) => {
-          state.clothes.map(
-            (item) =>
-              item.id === action.payload.id &&
-              item.sizes.map((currentItem) =>
-                currentItem.size === action.payload.size
-                  ? (currentItem.count += action.payload.count)
-                  : currentItem
-              )
-          );
-        }
-      )
-      .addCase(
-        decCountToShoppingCard.fulfilled,
-        (state, action: PayloadAction<IClothesChangeCount>) => {
-          state.clothes.map(
-            (item) =>
-              item.id === action.payload.id &&
-              item.sizes.map(
-                (currentItem) =>
-                  currentItem.size === action.payload.size &&
-                  (currentItem.count > 1
-                    ? (currentItem.count += action.payload.count)
-                    : currentItem)
-              )
-          );
-        }
-      )
-      .addCase(
-        removeFromShoppingCard.fulfilled,
-        (state, action: PayloadAction<IClothesRemove>) => {
-          // return {
-          //   error: state.error,
-          //   isLoading: state.isLoading,
-          //   clothes: state.clothes.filter(
-          //     (item) =>
-          //       item.id !== action.payload.id &&
-          //       item.sizes.filter(
-          //         (item) =>
-          //           item.size === action.payload.size &&
-          //           item.color === action.payload.color
-          //       )
-          //   ),
-          // };
-          // state.clothes.filter(
-          // //     (item) =>
-          // //       item.id !== action.payload.id &&
-          // //       item.sizes.filter(
-          // //         (item) =>
-          // //           item.size === action.payload.size &&
-          // //           item.color === action.payload.color
-          // //       )
-          // //   ),
-        }
-      )
-      .addCase(addToShoppingCard.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(addToShoppingCard.rejected, (state) => {
-        state.isLoading = false;
-        state.error = "Something went wrong!";
-      })
-      .addCase(
-        addToShoppingCard.fulfilled,
-        (state, action: PayloadAction<IClothesAdd>) => {
-          const equalIds = state.clothes.find(
-            (item: IShoppingCardItem) => item.id === action.payload.id
-          );
-          const equalsSizes = state.clothes.find(
-            (item) =>
-              equalIds?.id === item.id &&
-              item.sizes.some((item) => item.size === action.payload.size)
-          );
-          if (!equalIds) {
-            state.clothes.push({
-              name: action.payload.name,
-              id: action.payload.id,
-              price: action.payload.price,
-              sizes: [
-                {
-                  size: action.payload.size,
-                  count: 1,
-                  color: action.payload.color,
-                  img: action.payload.img,
-                },
-              ],
-            });
-            return;
-          }
-          if (equalIds) {
-            if (equalsSizes) {
-              equalsSizes.sizes.map((item) =>
-                item.size === action.payload.size ? item.count++ : null
-              );
-              return;
-            }
-            equalIds?.sizes.push({
-              size: action.payload.size,
-              count: 1,
-              color: action.payload.color,
-              img: action.payload.img,
-            });
-            return;
-          }
-          state.clothes.push({
-            name: action.payload.name,
-            id: action.payload.id,
-            price: action.payload.price,
-            sizes: [
-              {
-                size: action.payload.size,
-                count: 1,
-                color: action.payload.color,
-                img: action.payload.img,
-              },
-            ],
-          });
-        }
+  reducers: {
+    toggleOpen: (state) => {
+      state.isOpen = !state.isOpen;
+    },
+    removeClotheFromCart: (state, action: PayloadAction<IClotheRemove>) => {
+      state.clothes = state.clothes.filter((item) =>
+        item.id === action.payload.id &&
+        item.color === action.payload.color &&
+        item.size === action.payload.size
+          ? null
+          : item
       );
+    },
+    changeClothesCountOnCart: (
+      state,
+      action: PayloadAction<IClothesChangeCount>
+    ) => {
+      const item = state.clothes.find((item) => item.id === action.payload.id);
+      if (item) {
+        if (item.count + action.payload.count < 1) {
+          item.count = 1;
+          return;
+        }
+        item.count += action.payload.count;
+      }
+    },
+    addToShoppingCart: (state, action: PayloadAction<IShoppingCardItem>) => {
+      state.clothes.push(action.payload);
+    },
+    addDeliveryInfo: (state, action: PayloadAction<IObjectInfo>) => {
+      state.deliveryInfo = action.payload;
+    },
+    addDeliveryPaymentsInfo: (state, action: PayloadAction<IObjectInfo>) => {
+      state.paymentsInfo = action.payload;
+    },
   },
 });
 
 export const shoppingCardReducer = shoppingCardSlice.reducer;
+export const {
+  addToShoppingCart,
+  changeClothesCountOnCart,
+  removeClotheFromCart,
+  toggleOpen,
+  addDeliveryInfo,
+  addDeliveryPaymentsInfo,
+} = shoppingCardSlice.actions;
 
-export const selectAllProductId = (state: RootState) =>
-  state.shoppingCard.clothes.map((item) => item.id);
+export const selectShoppingCardOpen = (state: RootState) =>
+  state.shoppingCard.isOpen;
 
-export const selectAllProducts = (state: RootState) =>
+export const selectShoppingCardItemsPrice = (state: RootState) =>
+  state.shoppingCard.clothes.reduce(
+    (acc, item) => (acc += item.price * item.count),
+    0
+  );
+
+export const selectShoppingCardClothes = (state: RootState) =>
   state.shoppingCard.clothes;
 
-export const selectAllProductsCount = (state: RootState) =>
-  state.shoppingCard.clothes.reduce((acc, item) => {
-    item.sizes?.map((sizeItem) => (acc += sizeItem.count));
-    return acc;
-  }, 0);
-
-export const selectAllProductPrice = (state: RootState) => {
-  // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-  let solvePrice: number = 0;
-
-  state.shoppingCard.clothes.map((item) => {
-    solvePrice +=
-      item.price * item.sizes.reduce((acc, val) => acc + val.count, 0);
-  });
-  return solvePrice.toFixed(2);
+export const selectContainShoppingCardItem = (
+  state: RootState,
+  payload: IShoppingCardItemEqual
+) => {
+  const item = state.shoppingCard.clothes.find(
+    (item) =>
+      item.id === payload.id &&
+      item.color === payload.color &&
+      item.size === payload.size
+  );
+  if (item) {
+    return true;
+  }
+  return false;
 };
+
+export const selectShoppingCountItems = (state: RootState) =>
+  state.shoppingCard.clothes.reduce((acc, item) => (acc += item.count), 0);

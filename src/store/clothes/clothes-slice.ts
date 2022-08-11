@@ -3,7 +3,7 @@ import {
   IClothesItem,
   IParticulars,
 } from "../../components/Container-components/Clothes/Clothes.props";
-import { IThunkApi, RootState } from "../store";
+import { RootState } from "../store";
 
 // ! INTERFACE FOR ALL CLOTHES
 export interface IClothes {
@@ -39,70 +39,48 @@ export const initialState: IClothes = {
   },
 };
 
-export const getClothes = createAsyncThunk<void, void, IThunkApi>(
-  name + "/GET_CLOTHES",
-  async (_, { rejectWithValue, extra: { client, api } }) => {
-    try {
-      return (await client.get(api.URL_PRODUCTS)).data;
-    } catch (error) {
-      return rejectWithValue(error || "Failed to load clothes");
-    }
-  }
-);
+// export const getClothes = createAsyncThunk<void, void, IThunkApi>(
+//   name + "/GET_CLOTHES",
+//   async (_, { rejectWithValue, extra: { client, api } }) => {
+//     try {
+//       return (await client.get(api.URL_PRODUCTS)).data;
+//     } catch (error) {
+//       return rejectWithValue(error || "Failed to load clothes");
+//     }
+//   }
+// );
 
-export const getClothesByCategory = createAsyncThunk<string, string, IThunkApi>(
-  name + "/GET_CLOTHES_BY_CATEGORY",
-  async (category: string, { rejectWithValue, extra: { client, api } }) => {
-    try {
-      if (category.toLocaleLowerCase() === "all") {
-        return (await client.post(api.URL_PRODUCTS)).data;
-      }
-      return (await client.post(api.URL_CATEGORY + category)).data;
-    } catch (error) {
-      return rejectWithValue(error || "Failed to load clothes");
-    }
-  }
-);
+// export const getClothesByCategory = createAsyncThunk<string, string, IThunkApi>(
+//   name + "/GET_CLOTHES_BY_CATEGORY",
+//   async (category: string, { rejectWithValue, extra: { client, api } }) => {
+//     try {
+//       if (category.toLocaleLowerCase() === "all") {
+//         return (await client.post(api.URL_PRODUCTS)).data;
+//       }
+//       return (await client.post(api.URL_CATEGORY + category)).data;
+//     } catch (error) {
+//       return rejectWithValue(error || "Failed to load clothes");
+//     }
+//   }
+// );
 
-export const getClothesById = createAsyncThunk<string, string, IThunkApi>(
-  name + "/GET_CLOTH_BY_ID",
-  async (id: string, { rejectWithValue, extra: { client, api } }) => {
-    try {
-      return (await client.post(api.URL_PRODUCT + id)).data;
-    } catch (error) {
-      return rejectWithValue(error || "Failed to load clothes");
-    }
-  }
-);
+// export const getClothesById = createAsyncThunk<string, string, IThunkApi>(
+//   name + "/GET_CLOTH_BY_ID",
+//   async (id: string, { rejectWithValue, extra: { client, api } }) => {
+//     try {
+//       return (await client.post(api.URL_PRODUCT + id)).data;
+//     } catch (error) {
+//       return rejectWithValue(error || "Failed to load clothes");
+//     }
+//   }
+// );
 
 export const clothesSlice = createSlice({
   name,
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(getClothes.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(getClothes.rejected, (state) => {
-        state.isLoading = false;
-        state.error = "Something went wrong!";
-      })
-      .addCase(getClothes.fulfilled, (state, action: PayloadAction<any>) => {
-        console.log(action.payload);
-        state.isLoading = false;
-        state.error = null;
-        state.clothes = action.payload;
-      })
-      .addCase(
-        getClothesByCategory.fulfilled,
-        (state, action: PayloadAction<any>) => action.payload
-      )
-      .addCase(
-        getClothesById.fulfilled,
-        (state, action: PayloadAction<IClothesItem | any>) => action.payload
-      );
+    builder;
   },
 });
 
@@ -204,3 +182,5 @@ export const selectClothesByGenderAndFilters = (
   }
   return result;
 };
+
+export const selectClothes3 = (state: RootState) => state.clothes;

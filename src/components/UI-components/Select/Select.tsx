@@ -1,28 +1,26 @@
 import { ISelectOption, ISelectProps } from "./Select.props";
-import cn from "classnames";
 import "./Select.scss";
-import { useLayoutEffect, useState } from "react";
+import { useEffect } from "react";
 import Select, { OnChangeValue, SingleValue } from "react-select";
-import { isTemplateSpan } from "typescript";
 
 const UISelect = ({
-  value = "all",
+  value = "",
   setValue,
   items,
   className,
   ...props
 }: ISelectProps) => {
-  useLayoutEffect(() => {
+  useEffect(() => {
     items.map((item) => {
       item.label.toLocaleUpperCase();
       return item;
     });
   }, []);
 
-  const getValue = () => (value ? items.find((c) => c.value === value) : "all");
+  const getValue = () => (value ? items.find((c) => c.category === value) : "");
 
   const onChange = (newValue: SingleValue<string | ISelectOption>) => {
-    setValue((newValue as ISelectOption).value);
+    setValue((newValue as ISelectOption).category);
   };
 
   return (

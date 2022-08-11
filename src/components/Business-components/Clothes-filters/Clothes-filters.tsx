@@ -4,17 +4,19 @@ import { ReactComponent as ViewGrid } from "../../../imgs/main/view-grid.svg";
 import cn from "classnames";
 import { IClothesFilters } from "./Clothes-filters.props";
 import "./Clothes-filters.scss";
+import { useAppDispatch } from "../../../store/store";
 
 export const ClothesFilters = ({
   setOpenFilter,
   className,
   ...props
 }: IClothesFilters) => {
+  const dispatch = useAppDispatch();
   return (
     <section className={cn("clothes-filters__container", className)} {...props}>
       <span
         className={"clothes-filters__filter"}
-        onClick={() => setOpenFilter()}
+        onClick={() => dispatch(setOpenFilter())}
       >
         <FilterIcon />
         <span className={"clothes-filters__filter-text"}>Filter</span>

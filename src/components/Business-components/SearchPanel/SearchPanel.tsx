@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { selectClothes } from "../../../store/clothes/clothes-slice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
@@ -16,22 +16,22 @@ import {
   clearAllBodyScrollLocks,
 } from "body-scroll-lock";
 import { useRef } from "react";
-import {
-  getClothesByParams,
-  selectSearchClothes,
-} from "../../../store/clothes/search/clothes-search-slice";
+import { selectSearchClothes } from "../../../store/clothes/search/clothes-search-slice";
+import { useGetProductByCategorySearchQuery } from "../../../store/api";
+import Loader from "../../UI-components/Loader/Loader";
+import { useDebounce } from "../../../hooks/use-throttle-debounce";
 
 const items = [
   {
-    value: "all",
+    category: "",
     label: "all categories",
   },
   {
-    value: "men",
+    category: "men",
     label: "men",
   },
   {
-    value: "women",
+    category: "women",
     label: "women",
   },
 ];
@@ -43,19 +43,45 @@ function SearchPanel({
   ...props
 }: ISearchPanelProps) {
   const dispatch = useAppDispatch();
-  const [inputQuery, setInputQuery] = useState("");
-  const [selectValue, setSelectValue] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectValue, setSelectValue] = useState("");
 
-  const startClothes = useAppSelector((state) => selectSearchClothes(state));
+  const {
+    data: clothes,
+    isError,
+    isLoading,
+  } = useGetProductByCategorySearchQuery(selectValue, {
+    refetchOnMountOrArgChange: true,
+  });
+
   const targetRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    dispatch(getClothesByParams({ name: inputQuery, category: selectValue }));
-  }, [selectValue, inputQuery]);
+  if (!clothes) {
+    return <Loader />;
+  }
 
-  const handleInput = (str: string) => {
-    setInputQuery(str);
-  };
+  const selectedClothes = useMemo(
+    () => [...clothes.men, ...clothes.women],
+    [selectValue]
+  );
+
+  const visibleClothes = useMemo(
+    () =>
+      selectedClothes.filter((item) =>
+        item.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
+      ),
+    [searchQuery, selectedClothes]
+  );
+
+  console.log(visibleClothes);
+
+  const handleInput = useDebounce((str: string) => {
+    setSearchQuery(() => str);
+  }, 700);
+
+  useEffect(() => {
+    console.log(visibleClothes);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (isOpen) {
@@ -89,15 +115,17 @@ function SearchPanel({
         <UISelect value={selectValue} setValue={setSelectValue} items={items} />
         <Input
           className={cn("search-panel__input")}
-          value={inputQuery}
-          onHandle={handleInput}
+          value={searchQuery}
+          onChange={(e: React.FormEvent<HTMLInputElement>) =>
+            handleInput(e.currentTarget.value)
+          }
         />
       </div>
       <hr />
       <h3 className={cn("search-panel__subtitle")}>Need some inspiration?</h3>
-      {startClothes.length > 0 && (
+      {visibleClothes.length > 0 && (
         <ul className={cn("search-panel__list")}>
-          {startClothes.map((item: IClothesItem) => (
+          {visibleClothes.map((item: IClothesItem) => (
             <SmallClothesItem key={item.id} id={item.id} />
           ))}
         </ul>

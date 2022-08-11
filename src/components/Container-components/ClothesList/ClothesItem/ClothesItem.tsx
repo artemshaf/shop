@@ -7,11 +7,16 @@ import { SizesMarkList } from "../../SizesMarkList/SizesMarkList";
 import { ReactComponent as HeartIcon } from "../../../../imgs/main/heart.svg";
 import { ReactComponent as ScaleIcon } from "../../../../imgs/main/scale.svg";
 import { GET_IMAGE_URL } from "../../../../helpers/generateUrl";
-import { useNavigate } from "react-router-dom";
-import { addToShoppingCard } from "../../../../store/shopping-card/shopping-card-slice";
+import { useNavigate, useParams } from "react-router-dom";
 import { solvedDiscount } from "../../../../helpers/prices";
-import { useAppDispatch } from "../../../../store/store";
-import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../../store/store";
+import { useEffect, useMemo, useState } from "react";
+import {
+  addToShoppingCart,
+  removeClotheFromCart,
+  selectContainShoppingCardItem,
+} from "../../../../store/shopping-card/shopping-card-slice";
+import { IImgs } from "../../Clothes/Clothes.props";
 
 export const ClothesItem = ({
   thing,
@@ -19,7 +24,7 @@ export const ClothesItem = ({
   ...props
 }: IClothesItemProps) => {
   const dispatch = useAppDispatch();
-  const [activeSize, setActiveSize] = useState<string>(thing.sizes[0]);
+  const [activeSize, setActiveSize] = useState<string>(thing?.sizes[0] || "");
   const [activeColor, setActiveColor] = useState<string>(
     thing?.images[0].color as string
   );
@@ -29,28 +34,37 @@ export const ClothesItem = ({
     ...new Map(thing?.images.map((item) => [item["color"], item])).values(),
   ];
 
+  const isContainItemInCart = useAppSelector((state) =>
+    selectContainShoppingCardItem(state, {
+      id: (thing?.images?.find((item) => item.color === activeColor) as IImgs)
+        .id as string,
+      size: activeSize,
+      color: activeColor,
+    })
+  );
+
   return (
     <li className={cn("clothes__list-item", className)} {...props}>
       <img
         className="clothes__list-item__img"
-        src={GET_IMAGE_URL(thing.images[0].url)}
-        alt={thing.name}
-        onClick={() => navigate("../../" + thing.category + "/" + thing.id)}
+        src={GET_IMAGE_URL(thing?.images[0].url)}
+        alt={thing?.name}
+        onClick={() => navigate("../../" + thing?.category + "/" + thing?.id)}
       />
-      <p className="clothes__list-item__title">{thing.name}</p>
-      {thing.discount && (
-        <p className="clothes__list-item__badge">{thing.discount}</p>
+      <p className="clothes__list-item__title">{thing?.name}</p>
+      {thing?.discount && (
+        <p className="clothes__list-item__badge">{thing?.discount}</p>
       )}
       <div className="clothes__list-item__descr">
         <span className="clothes__list-item__price body-text_bold">
-          $ {thing.price.toFixed(2)}
+          $ {thing?.price.toFixed(2)}
         </span>
-        {thing.discount && (
+        {thing?.discount && (
           <span className="clothes__list-item__price_old body-text_bold">
-            $ {solvedDiscount(thing.price, thing.discount)}
+            $ {solvedDiscount(thing?.price, thing?.discount)}
           </span>
         )}
-        <Rating rate={thing.rating} />
+        <Rating rate={thing?.rating} />
       </div>
       <div className={cn("clothes__list-item__actions-block")}>
         <div>
@@ -78,7 +92,7 @@ export const ClothesItem = ({
           )}
         </div>
         <SizesMarkList
-          sizes={thing.sizes}
+          sizes={thing?.sizes}
           active={activeSize}
           setActive={setActiveSize}
         />
@@ -86,27 +100,39 @@ export const ClothesItem = ({
           <Button
             className={cn("clothes__list-item__actions-btn")}
             appearence="dark"
-            disabled={activeSize === "" ? true : false}
+            disabled={
+              activeSize !== "" ? (activeColor !== "" ? false : true) : true
+            }
             size="lg"
-            onClick={() => {
-              activeSize !== ""
+            onClick={() =>
+              isContainItemInCart
                 ? dispatch(
-                    addToShoppingCard({
-                      name: thing.name,
-                      id: thing.id,
-                      price: thing.price,
+                    removeClotheFromCart({
+                      id: thing?.images.find(
+                        (item) => item.color === activeColor
+                      )?.id as string,
+                      color: activeColor,
+                      size: activeSize,
+                    })
+                  )
+                : dispatch(
+                    addToShoppingCart({
+                      id: thing?.images.find(
+                        (item) => item.color === activeColor
+                      )?.id as string,
+                      name: thing?.name,
+                      price: thing?.price,
                       count: 1,
                       size: activeSize,
                       color: activeColor,
-                      img: thing.images.find(
+                      img: thing?.images.find(
                         (item) => item.color === activeColor
                       )?.url as string,
                     })
                   )
-                : null;
-            }}
+            }
           >
-            ADD TO CART
+            {isContainItemInCart ? "REMOVE FROM CART" : "ADD TO CART"}
           </Button>
           <HeartIcon className={cn("clothes__list-item__actions-icon")} />
           <ScaleIcon className={cn("clothes__list-item__actions-icon")} />

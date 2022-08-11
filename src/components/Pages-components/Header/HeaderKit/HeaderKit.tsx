@@ -6,19 +6,25 @@ import { ReactComponent as Bag } from "../../../../imgs/main/shopping-bag.svg";
 import { v4 as uuidv4 } from "uuid";
 import "./HeaderKit.scss";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../../../store/store";
-import { selectAllProductsCount } from "../../../../store/shopping-card/shopping-card-slice";
+import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { useState } from "react";
 import SearchPanel from "../../../Business-components/SearchPanel/SearchPanel";
 import cn from "classnames";
 import ShoppingCard from "../../../../pages/ShoppingCard/ShoppingCard";
+import {
+  selectShoppingCardOpen,
+  selectShoppingCountItems,
+  toggleOpen,
+} from "../../../../store/shopping-card/shopping-card-slice";
 
 export const HeaderKit = ({ className, ...props }: IHeaderKitProps) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
-  const countItems = useAppSelector((state) => selectAllProductsCount(state));
-
+  const isOpenCart = useAppSelector((state) => selectShoppingCardOpen(state));
+  const countItemsInCart = useAppSelector((state) =>
+    selectShoppingCountItems(state)
+  );
   const items = [
     {
       icon: (
@@ -38,13 +44,16 @@ export const HeaderKit = ({ className, ...props }: IHeaderKitProps) => {
         <div className={cn("header-kit-icon__bag")}>
           <Bag
             className={cn("header-kit-icon")}
-            onClick={() => setCartOpen(!cartOpen)}
+            onClick={() => dispatch(toggleOpen())}
           />
-          <ShoppingCard open={cartOpen} setOpen={setCartOpen} />
-          {countItems > 0 ? (
+          <ShoppingCard
+            open={isOpenCart}
+            setOpen={() => dispatch(toggleOpen())}
+          />
+          {countItemsInCart > 0 ? (
             <>
               <div className={cn("header-kit-icon__bag__badge")}>
-                {countItems}
+                {countItemsInCart}
               </div>
             </>
           ) : (

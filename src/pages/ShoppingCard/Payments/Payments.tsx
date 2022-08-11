@@ -14,6 +14,8 @@ import {
   visaSchema,
 } from "./varianstPayments";
 import "./Payments.scss";
+import { useAppDispatch } from "../../../store/store";
+import { addDeliveryPaymentsInfo } from "../../../store/shopping-card/shopping-card-slice";
 
 export interface Fields {
   email: string;
@@ -77,7 +79,10 @@ const Payments = ({
     formState: { errors },
   } = useForm<Fields>({ resolver });
 
+  const dispatch = useAppDispatch();
+
   const onSubmit: SubmitHandler<Fields> = (data) => {
+    dispatch(addDeliveryPaymentsInfo({ activePayments, ...data }));
     setActiveRoute(3);
   };
 
@@ -109,7 +114,6 @@ const Payments = ({
                 input_error: errors.email,
               })}
               placeholder="E-mail"
-              // error={errors.}
               {...register("email")}
             >
               e-mail
