@@ -1,7 +1,11 @@
 import cn from "classnames";
 import React, { useEffect, useMemo } from "react";
 import { useState } from "react";
-import { selectClothes } from "../../../store/clothes/clothes-slice";
+import {
+  IClothes,
+  IProducts,
+  selectClothes,
+} from "../../../store/clothes/clothes-slice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { IClothesItem } from "../../Container-components/Clothes/Clothes.props";
 import SmallClothesItem from "../../Container-components/SmallClothesItem/SmallClothesItem";
@@ -42,27 +46,27 @@ function SearchPanel({
   className,
   ...props
 }: ISearchPanelProps) {
-  const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectValue, setSelectValue] = useState("");
 
   const {
-    data: clothes,
-    isError,
     isLoading,
-  } = useGetProductByCategorySearchQuery(selectValue, {
-    refetchOnMountOrArgChange: true,
-  });
+    data: clothes = {} as IProducts,
+    refetch,
+  } = useGetProductByCategorySearchQuery(selectValue);
 
   const targetRef = useRef<HTMLDivElement>(null);
 
-  if (!clothes) {
-    return <Loader />;
-  }
-
-  const selectedClothes = useMemo(
-    () => [...clothes.men, ...clothes.women],
-    [selectValue]
+  const selectedClothes: IClothesItem[] = useMemo(
+    () =>
+      Object.keys(clothes).reduce(
+        (acc: IClothesItem[], key) => [
+          ...acc,
+          ...clothes[key as keyof IProducts],
+        ],
+        []
+      ),
+    [selectValue, clothes]
   );
 
   const visibleClothes = useMemo(
@@ -73,15 +77,9 @@ function SearchPanel({
     [searchQuery, selectedClothes]
   );
 
-  console.log(visibleClothes);
-
   const handleInput = useDebounce((str: string) => {
     setSearchQuery(() => str);
   }, 700);
-
-  useEffect(() => {
-    console.log(visibleClothes);
-  }, [searchQuery]);
 
   useEffect(() => {
     if (isOpen) {
@@ -126,7 +124,7 @@ function SearchPanel({
       {visibleClothes.length > 0 && (
         <ul className={cn("search-panel__list")}>
           {visibleClothes.map((item: IClothesItem) => (
-            <SmallClothesItem key={item.id} id={item.id} />
+            <SmallClothesItem key={item.id} item={item} />
           ))}
         </ul>
       )}

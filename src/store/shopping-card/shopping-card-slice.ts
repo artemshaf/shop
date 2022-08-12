@@ -56,6 +56,9 @@ export const shoppingCardSlice = createSlice({
     toggleOpen: (state) => {
       state.isOpen = !state.isOpen;
     },
+    setInitial: (state) => {
+      state.clothes = [];
+    },
     removeClotheFromCart: (state, action: PayloadAction<IClotheRemove>) => {
       state.clothes = state.clothes.filter((item) =>
         item.id === action.payload.id &&
@@ -98,6 +101,7 @@ export const {
   toggleOpen,
   addDeliveryInfo,
   addDeliveryPaymentsInfo,
+  setInitial,
 } = shoppingCardSlice.actions;
 
 export const selectShoppingCardOpen = (state: RootState) =>

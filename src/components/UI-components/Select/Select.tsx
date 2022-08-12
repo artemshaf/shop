@@ -20,6 +20,8 @@ const UISelect = ({
   const getValue = () => (value ? items.find((c) => c.category === value) : "");
 
   const onChange = (newValue: SingleValue<string | ISelectOption>) => {
+    console.log(newValue);
+
     setValue((newValue as ISelectOption).category);
   };
 

@@ -86,20 +86,6 @@ export const clothesSlice = createSlice({
 
 export const clothesReducer = clothesSlice.reducer;
 
-export const selectClothesByIds = (state: RootState, ids: string[]) => {
-  const result: IClothesItem[] = [];
-  const ref: IObjectPlug = state.clothes.clothes;
-  for (const key in ref) {
-    ref[key].map((item: IClothesItem) => {
-      if (ids.includes(item.id)) {
-        result.push(item);
-      }
-      return;
-    });
-  }
-  return result;
-};
-
 export const selectIsLoading = (state: RootState) => state.clothes.isLoading;
 export const selectError = (state: RootState) => state.clothes.error;
 
@@ -128,59 +114,3 @@ export const selectClothByGenderAndId = (
   const ref = selectClothesByGender(state, gender);
   return ref.find((item) => item.id === id);
 };
-
-export const selectClothById = (state: RootState, id: string) => {
-  const res = state.clothes.clothes.men.find((item) => item.id === id);
-
-  return (
-    selectClothByGenderAndId(state, "men", id) ||
-    selectClothByGenderAndId(state, "women", id)
-  );
-};
-
-export const selectClothesByGenderAndFilters = (
-  filters: IClothesFilters,
-  clothes: IClothesItem[]
-) => {
-  let result = clothes.slice();
-
-  if (filters.brand.length > 0) {
-    result = result.filter((item) => filters.brand.includes(item.brand));
-  }
-  if (filters.color.length > 0) {
-    result = result.filter(
-      (item) =>
-        item.images.filter((img) =>
-          filters.color
-            .map((f) => f.toLocaleLowerCase())
-            .includes(img.color.toLocaleLowerCase())
-        ).length
-    );
-  }
-  if (filters.price.length > 0) {
-    console.log("filters.price");
-
-    result = result.filter((item) => {
-      if (
-        filters.price.map((fP) => +fP).filter((fP) => fP < item.price).length >
-        0
-      ) {
-        return item;
-      }
-      return null;
-    });
-  }
-  if (filters.sizes.length > 0) {
-    result = result.filter(
-      (item) =>
-        item.sizes.filter((s) =>
-          filters.sizes
-            .map((f) => f.toLocaleLowerCase())
-            .includes(s.toLocaleLowerCase())
-        ).length
-    );
-  }
-  return result;
-};
-
-export const selectClothes3 = (state: RootState) => state.clothes;

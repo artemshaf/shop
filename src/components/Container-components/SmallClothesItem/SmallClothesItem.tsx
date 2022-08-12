@@ -1,24 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { GET_IMAGE_URL } from "../../../helpers/generateUrl";
 import { solvedDiscount } from "../../../helpers/prices";
-import { selectClothById } from "../../../store/clothes/clothes-slice";
 import { useAppSelector } from "../../../store/store";
 import { IClothesItem } from "../Clothes/Clothes.props";
 import { ISmallClothesItemProps } from "./SmallClothesItem.props";
 import "./SmallClothesItem.scss";
 
 const SmallClothesItem = ({
-  id,
   sizes,
-  count,
+  item,
   className,
   ...props
 }: ISmallClothesItemProps) => {
   const navigate = useNavigate();
-  const item = useAppSelector((state) =>
-    selectClothById(state, id)
-  ) as IClothesItem;
-  let totalPrice = 0;
+  // let totalPrice = 0;
 
   return (
     <li
@@ -44,7 +39,7 @@ const SmallClothesItem = ({
             <>
               <ul className="small-clothes-item__info__price__list">
                 {sizes.map((sizeItem) => {
-                  totalPrice += sizeItem.count * item?.price;
+                  // totalPrice += sizeItem.count * item?.price;
                   return (
                     <li className="small-clothes-item__info__price__list-item">
                       <span>
@@ -78,7 +73,7 @@ const SmallClothesItem = ({
                 })}
               </ul>
               <span className="small-clothes-item__info__price__list-item__total">
-                TOTAL PRICE: {totalPrice.toFixed(2)}$
+                {/* TOTAL PRICE: {totalPrice.toFixed(2)}$ */}
               </span>
             </>
           ) : item?.discount ? (

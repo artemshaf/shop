@@ -9,12 +9,14 @@ import persistReducer from "redux-persist/es/persistReducer";
 import persistStore from "redux-persist/es/persistStore";
 import { mailApi, productsApi, reviewApi, searchApi } from "./api";
 import { clothesFiltersReducer } from "./clothes/filters/clothes-filters-slice";
+import { emailReducer } from "./email/email-slice";
 
 const rootReducer = combineReducers({
   clothes: clothesReducer,
   shoppingCard: shoppingCardReducer,
   clothesFilters: clothesFiltersReducer,
   searchPanel: clothesSearchReducer,
+  email: emailReducer,
   [productsApi.reducerPath]: productsApi.reducer,
   [mailApi.reducerPath]: mailApi.reducer,
   [reviewApi.reducerPath]: reviewApi.reducer,

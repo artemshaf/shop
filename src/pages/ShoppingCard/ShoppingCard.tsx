@@ -16,6 +16,7 @@ import {
   selectShoppingCardClothes,
   selectShoppingCardItemsPrice,
 } from "../../store/shopping-card/shopping-card-slice";
+import FinishOrder from "./FinishOrder/FinishOrder";
 
 interface IButtonBehavior {
   onClick: () => void;
@@ -136,9 +137,7 @@ const ShoppingCard = ({
         link: "Payments",
       },
       {
-        component: (
-          <h1 className="shopping-card__centered">Thanks form Payment!!!</h1>
-        ),
+        component: <FinishOrder />,
       },
     ],
     [activeRoute, shoppingItems]
